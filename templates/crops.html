@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Crop Guide — AgroHub{% endblock %}
+{% block content %}
+<div class="phero">
+  <span class="phi">🌱</span>
+  <h1 data-en="Crop Growing Guide" data-ta="பயிர் சாகுபடி வழிகாட்டி">Crop Growing Guide</h1>
+  <p data-en="Detailed guides for Tamil Nadu's major crops — varieties, fertilizers, harvesting & more" data-ta="தமிழ்நாட்டின் முக்கிய பயிர்களுக்கான விரிவான வழிகாட்டி">Detailed guides for Tamil Nadu's major crops</p>
+</div>
+<section class="sec">
+  <div class="container">
+    <div class="tabs">
+      <a href="/crops/" class="tab {% if not active_cat %}on{% endif %}" data-en="All Crops" data-ta="எல்லா பயிர்கள்">All Crops</a>
+      <a href="?cat=grain"     class="tab {% if active_cat == 'grain' %}on{% endif %}"     data-en="Grains"     data-ta="தானியங்கள்">Grains</a>
+      <a href="?cat=vegetable" class="tab {% if active_cat == 'vegetable' %}on{% endif %}" data-en="Vegetables"  data-ta="காய்கறிகள்">Vegetables</a>
+      <a href="?cat=fruit"     class="tab {% if active_cat == 'fruit' %}on{% endif %}"     data-en="Fruits"     data-ta="பழங்கள்">Fruits</a>
+      <a href="?cat=cash"      class="tab {% if active_cat == 'cash' %}on{% endif %}"      data-en="Cash Crops"  data-ta="பண பயிர்கள்">Cash Crops</a>
+      <a href="?cat=spice"     class="tab {% if active_cat == 'spice' %}on{% endif %}"     data-en="Spices"     data-ta="மசாலா பயிர்கள்">Spices</a>
+    </div>
+
+    {% if crops %}
+    <div class="ga">
+      {% for crop in crops %}
+      <a href="/crops/{{ crop.id }}/" class="cropcard">
+        <div class="cropemi">{{ crop.emoji }}</div>
+        <div class="cropn">{{ crop.name }}</div>
+        <div class="cropnt" data-en="{{ crop.name }}" data-ta="{{ crop.name_tamil }}">{{ crop.name_tamil }}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          <span class="bg bgg">{{ crop.get_season_display }}</span>
+          <span class="bg bga">{{ crop.get_category_display }}</span>
+        </div>
+        <div class="cropinfo">
+          <div>⏱ {{ crop.duration_days }}</div>
+          <div>💧 {{ crop.water_req }}</div>
+          <div>💰 {{ crop.market_price }}</div>
+        </div>
+        <div style="margin-top:10px;color:var(--g500);font-size:.8rem;font-weight:700">View Details →</div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:60px 20px;color:var(--c500)">
+      <div style="font-size:3rem;margin-bottom:14px">🌱</div>
+      <h3 data-en="No crop data yet. Run seed_data command." data-ta="பயிர் தரவு இல்லை. seed_data command இயக்கவும்.">No crop data yet. Run: python manage.py seed_data</h3>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

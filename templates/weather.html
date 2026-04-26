@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}AgroWeather — Farm Weather{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <span class="page-hero-icon">🌦️</span>
+  <h1 data-en="AgroWeather" data-ta="AgroWeather">AgroWeather</h1>
+  <p data-en="Weather forecasts tailored for farming decisions" data-ta="விவசாய முடிவுகளுக்கான வானிலை அறிக்கை">Weather forecasts tailored for farming decisions</p>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="weather-search">
+      <input type="text" id="weatherCity" class="fi"
+        data-ph-en="Enter district name..." data-ph-ta="மாவட்டம் உள்ளிடவும்..."
+        placeholder="Enter district name..." style="max-width:360px"/>
+      <button class="btn btnP" onclick="getWeather()" data-en="Get Weather" data-ta="வானிலை பார்க்க">Get Weather</button>
+    </div>
+    <div class="weather-main-card card" id="weatherCard">
+      <div class="weather-big">
+        <div class="w-icon" id="wIcon">⛅</div>
+        <div><div class="w-temp" id="wTemp">-- °C</div><div class="w-desc" id="wDesc" data-en="Select a district" data-ta="மாவட்டம் தேர்ந்தெடுக்கவும்">Select a district</div><div class="w-loc" id="wLoc">—</div></div>
+      </div>
+      <div class="weather-stats">
+        <div class="ws"><span>💧</span><strong id="wHum">--%</strong><p data-en="Humidity" data-ta="ஈரப்பதம்">Humidity</p></div>
+        <div class="ws"><span>💨</span><strong id="wWind">-- km/h</strong><p data-en="Wind" data-ta="காற்று">Wind</p></div>
+        <div class="ws"><span>🌡️</span><strong id="wFeel">-- °C</strong><p data-en="Feels like" data-ta="உணர்வு">Feels like</p></div>
+        <div class="ws"><span>🌧️</span><strong id="wRain">-- mm</strong><p data-en="Rainfall" data-ta="மழை">Rainfall</p></div>
+      </div>
+    </div>
+    <div class="advisory-card card" id="advisoryCard" style="margin-top:24px">
+      <h3 data-en="🌾 Farming Advisory" data-ta="🌾 விவசாய அறிவுரை">🌾 Farming Advisory</h3>
+      <p id="advisoryText" data-en="Get weather data to see advisory" data-ta="அறிவுரை காண வானிலை தகவல் பெறுங்கள்">Get weather data to see advisory</p>
+    </div>
+    <div class="forecast-strip" id="forecastStrip"></div>
+  </div>
+</section>
+{% endblock %}

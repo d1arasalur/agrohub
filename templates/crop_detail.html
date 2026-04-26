@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}{{ crop.name }} Guide — AgroHub{% endblock %}
+{% block content %}
+
+<!-- PAGE HERO -->
+<div class="phero">
+  <span class="phi">{{ crop.emoji }}</span>
+  <h1>{{ crop.name }} <span style="font-weight:400;opacity:.75;font-size:.7em">({{ crop.name_tamil }})</span></h1>
+  <p>{{ crop.description|truncatewords:24 }}</p>
+</div>
+
+<section class="sec">
+  <div class="container">
+    <a href="/crops/" style="color:var(--g700);font-size:.84rem;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-bottom:24px">← <span data-en="Back to Crops" data-ta="பயிர்களுக்கு திரும்பு">Back to Crops</span></a>
+
+    <!-- OVERVIEW -->
+    <div class="g2" style="margin-bottom:28px">
+      <div>
+        <h2 style="font-size:1.1rem;font-weight:800;color:var(--g800);margin-bottom:14px" data-en="Crop Overview" data-ta="பயிர் விவரம்">Crop Overview</h2>
+        <p style="font-size:.85rem;color:var(--c600);line-height:1.7;margin-bottom:14px">{{ crop.description }}</p>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <span class="bg bgg">{{ crop.get_season_display }}</span>
+          <span class="bg bga">{{ crop.get_category_display }}</span>
+          {% if crop.suitable_districts %}<span class="bg bgb" data-en="Tamil Nadu" data-ta="தமிழ்நாடு">Tamil Nadu</span>{% endif %}
+        </div>
+      </div>
+      <div>
+        <div class="infogrid">
+          <div class="ibox"><span class="ilbl" data-en="Duration" data-ta="கால அளவு">Duration</span><div class="ival">⏱ {{ crop.duration_days }}</div></div>
+          <div class="ibox"><span class="ilbl" data-en="Water Req." data-ta="தண்ணீர் தேவை">Water Req.</span><div class="ival">💧 {{ crop.water_req }}</div></div>
+          <div class="ibox"><span class="ilbl" data-en="Temperature" data-ta="வெப்பநிலை">Temperature</span><div class="ival">🌡️ {{ crop.temp_range }}</div></div>
+          <div class="ibox"><span class="ilbl" data-en="Soil Type" data-ta="மண் வகை">Soil Type</span><div class="ival">🌍 {{ crop.soil_type|truncatewords:5 }}</div></div>
+          <div class="ibox"><span class="ilbl" data-en="pH Range" data-ta="pH அளவு">pH Range</span><div class="ival">🧪 {{ crop.ph_range }}</div></div>
+          <div class="ibox"><span class="ilbl" data-en="Yield/Hectare" data-ta="ஏக்கர் மகசூல்">Yield/Ha</span><div class="ival">📦 {{ crop.yield_per_ha }}</div></div>
+          <div class="ibox" style="grid-column:span 2"><span class="ilbl" data-en="Market Price" data-ta="சந்தை விலை">Market Price</span><div class="ival">💰 {{ crop.market_price }}</div></div>
+        </div>
+      </div>
+    </div>
+
+    {% if crop.suitable_districts %}
+    <div class="card cb" style="margin-bottom:24px">
+      <h3 style="font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:10px">📍 <span data-en="Suitable Districts in Tamil Nadu" data-ta="பொருத்தமான மாவட்டங்கள்">Suitable Districts in Tamil Nadu</span></h3>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        {% for d in crop.suitable_districts.split %}
+        <span class="bg bgb">{{ d }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- VARIETIES -->
+    {% if varieties %}
+    <div style="margin-bottom:32px">
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--g800);margin-bottom:16px">🌿 <span data-en="Recommended Varieties" data-ta="பரிந்துரைக்கப்பட்ட இரகங்கள்">Recommended Varieties</span></h2>
+      <div class="g2">
+        {% for v in varieties %}
+        <div class="varcard">
+          <h4>{{ v.name }}</h4>
+          <p>{{ v.specialty }}</p>
+          <div class="vtags">
+            <span class="bg bgg">⏱ {{ v.duration }}</span>
+            <span class="bg bga">📦 {{ v.yield_info }}</span>
+            {% if v.released_by %}<span class="bg bgb">{{ v.released_by }}</span>{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- HARVESTING -->
+    {% if harvest %}
+    <div style="margin-bottom:32px">
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--g800);margin-bottom:16px">🌾 <span data-en="Harvesting & Post-Harvest Guide" data-ta="அறுவடை & அறுவடைக்கு பின் வழிகாட்டி">Harvesting & Post-Harvest Guide</span></h2>
+      <div class="g2">
+        <div class="card cb">
+          <h3 style="font-size:.92rem;font-weight:700;margin-bottom:8px;color:var(--g800)">✅ <span data-en="Maturity Signs" data-ta="முதிர்ச்சி அறிகுறிகள்">Maturity Signs</span></h3>
+          <p style="font-size:.82rem;color:var(--c600);line-height:1.65">{{ harvest.maturity_signs }}</p>
+        </div>
+        <div class="card cb">
+          <h3 style="font-size:.92rem;font-weight:700;margin-bottom:8px;color:var(--g800)">🗡️ <span data-en="Harvest Method" data-ta="அறுவடை முறை">Harvest Method</span></h3>
+          <p style="font-size:.82rem;color:var(--c600);line-height:1.65">{{ harvest.harvest_method }}</p>
+        </div>
+        <div class="card cb">
+          <h3 style="font-size:.92rem;font-weight:700;margin-bottom:8px;color:var(--g800)">📦 <span data-en="Post-Harvest" data-ta="அறுவடைக்கு பின்">Post-Harvest</span></h3>
+          <p style="font-size:.82rem;color:var(--c600);line-height:1.65">{{ harvest.post_harvest }}</p>
+        </div>
+        <div class="card cb">
+          <h3 style="font-size:.92rem;font-weight:700;margin-bottom:8px;color:var(--g800)">🏪 <span data-en="Storage Tips" data-ta="சேமிப்பு குறிப்புகள்">Storage Tips</span></h3>
+          <p style="font-size:.82rem;color:var(--c600);line-height:1.65">{{ harvest.storage_tips }}</p>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <span class="bg bgg">🕐 Best Time: {{ harvest.best_time }}</span>
+            <span class="bg bga">📅 Shelf Life: {{ harvest.shelf_life }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- DISEASES -->
+    {% if diseases %}
+    <div style="margin-bottom:32px">
+      <h2 style="font-size:1.1rem;font-weight:800;color:var(--g800);margin-bottom:16px">🦠 <span data-en="Common Diseases & Treatment" data-ta="பொதுவான நோய்கள் & சிகிச்சை">Common Diseases & Treatment</span></h2>
+      <div class="g2">
+        {% for d in diseases %}
+        <div class="discard sev-{{ d.severity }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h4>{{ d.name }}</h4>
+            <span class="bg {% if d.severity == 'critical' %}bgr{% elif d.severity == 'high' %}bga{% else %}bgg{% endif %}">{{ d.get_severity_display }}</span>
+          </div>
+          {% if d.name_tamil %}<span style="font-size:.73rem;color:var(--c400);display:block;margin-bottom:8px">{{ d.name_tamil }}</span>{% endif %}
+          <span class="dlbl" data-en="Symptoms" data-ta="அறிகுறிகள்">Symptoms</span>
+          <p>{{ d.symptoms }}</p>
+          <span class="dlbl" style="margin-top:10px" data-en="Treatment" data-ta="சிகிச்சை">Treatment</span>
+          <p>{{ d.treatment }}</p>
+          <span class="dlbl" style="margin-top:10px" data-en="Prevention" data-ta="தடுப்பு">Prevention</span>
+          <p>{{ d.prevention }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- OTHER CROPS -->
+    {% if other_crops %}
+    <div>
+      <h2 style="font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:14px" data-en="Explore Other Crops" data-ta="மற்ற பயிர்களை பார்க்க">Explore Other Crops</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        {% for c in other_crops %}
+        <a href="/crops/{{ c.id }}/" style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--c200);border-radius:var(--r3);padding:8px 16px;font-size:.82rem;font-weight:600;color:var(--g800);transition:all .2s" onmouseover="this.style.borderColor='var(--g400)'" onmouseout="this.style.borderColor='var(--c200)'">
+          {{ c.emoji }} {{ c.name }}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Fertilizer Guide — AgroHub{% endblock %}
+{% block content %}
+<div class="phero">
+  <span class="phi">🧪</span>
+  <h1 data-en="Fertilizer Guide" data-ta="உர வழிகாட்டி">Fertilizer Guide</h1>
+  <p data-en="Complete information on chemical and organic fertilizers for Tamil Nadu crops" data-ta="தமிழ்நாட்டு பயிர்களுக்கான இரசாயன மற்றும் இயற்கை உரங்கள் பற்றிய முழுமையான தகவல்">Complete information on fertilizers for Tamil Nadu crops</p>
+</div>
+<section class="sec">
+  <div class="container">
+    <div class="tabs">
+      <a href="/fertilizer/" class="tab {% if not active_type %}on{% endif %}" data-en="All Types" data-ta="எல்லா வகை">All Types</a>
+      <a href="?type=inorganic" class="tab {% if active_type == 'inorganic' %}on{% endif %}" data-en="Chemical" data-ta="இரசாயன">Chemical</a>
+      <a href="?type=organic"   class="tab {% if active_type == 'organic' %}on{% endif %}"   data-en="Organic"  data-ta="இயற்கை">Organic</a>
+      <a href="?type=bio"       class="tab {% if active_type == 'bio' %}on{% endif %}"       data-en="Bio"      data-ta="உயிர் உரம்">Bio</a>
+      <a href="?type=npk"       class="tab {% if active_type == 'npk' %}on{% endif %}"       data-en="NPK"      data-ta="NPK">NPK</a>
+    </div>
+    {% if fertilizers %}
+    <div class="g2">
+      {% for f in fertilizers %}
+      <div class="fertcard">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="font-size:2rem">{{ f.emoji }}</div>
+          <div>
+            <div class="fertn">{{ f.name }}</div>
+            <div class="fertnt">{{ f.name_tamil }}</div>
+            <div style="display:flex;gap:5px;margin-top:4px">
+              <span class="bg {% if f.ftype == 'organic' %}bgg{% elif f.ftype == 'bio' %}bgb{% elif f.ftype == 'npk' %}bgp{% else %}bga{% endif %}">{{ f.get_ftype_display }}</span>
+              {% if f.npk_ratio %}<span class="bg bgb">{{ f.npk_ratio }}</span>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="fertrow"><span class="flbl" data-en="Dosage" data-ta="அளவு">Dosage</span><div class="fval" style="color:var(--c600)">{{ f.dosage }}</div></div>
+        <div class="fertrow"><span class="flbl" data-en="Suitable Crops" data-ta="பொருத்தமான பயிர்கள்">Suitable Crops</span><div class="fval" style="color:var(--c600)">{{ f.suitable_crops }}</div></div>
+        <div class="fertrow"><span class="flbl" data-en="Application Method" data-ta="பயன்படுத்தும் முறை">Application Method</span><div class="fval" style="color:var(--c600)">{{ f.application }}</div></div>
+        <div style="background:var(--g50);border-radius:var(--r);padding:12px;margin-top:10px;border:1px solid var(--g200)">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--g700);margin-bottom:5px" data-en="Benefits" data-ta="நன்மைகள்">Benefits</div>
+          <p style="font-size:.8rem;color:var(--c700);line-height:1.5">{{ f.benefits }}</p>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+          <div style="font-size:.78rem;color:var(--c400)" data-en="Price" data-ta="விலை">Price</div>
+          <div style="font-size:.88rem;font-weight:700;color:var(--g700)">{{ f.price_range }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:60px;color:var(--c500)">
+      <div style="font-size:2.5rem;margin-bottom:12px">🧪</div>
+      <p data-en="Run: python manage.py seed_data" data-ta="seed_data command இயக்கவும்">Run: python manage.py seed_data</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

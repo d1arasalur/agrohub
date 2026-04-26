@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}RentFarm — Equipment Rental{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <span class="page-hero-icon">🚜</span>
+  <h1 data-en="RentFarm — Equipment Rental" data-ta="RentFarm — இயந்திர வாடகை">RentFarm — Equipment Rental</h1>
+  <p data-en="Rent farm equipment from owners near you" data-ta="உங்களுக்கு அருகிலுள்ள இயந்திர உரிமையாளர்களிடம் வாடகைக்கு எடுங்கள்">Rent farm equipment from owners near you</p>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="market-toolbar">
+      <select class="form-control filter-sel" id="rentDist" onchange="filterEquip()">
+        <option value="" data-en="All Districts" data-ta="அனைத்து மாவட்டங்கள்">All Districts</option>
+        <option>Salem</option><option>Erode</option><option>Coimbatore</option><option>Madurai</option>
+      </select>
+      <select class="form-control filter-sel" id="rentType" onchange="filterEquip()">
+        <option value="" data-en="All Types" data-ta="அனைத்து வகை">All Types</option>
+        <option value="tractor" data-en="Tractor" data-ta="டிராக்டர்">Tractor</option>
+        <option value="harvester" data-en="Harvester" data-ta="அறுவடை இயந்திரம்">Harvester</option>
+        <option value="sprayer" data-en="Sprayer" data-ta="தெளிப்பு இயந்திரம்">Sprayer</option>
+        <option value="tiller" data-en="Tiller" data-ta="உழவு இயந்திரம்">Tiller</option>
+      </select>
+      {% if request.session.user_id %}
+      <button class="btn btnP" onclick="document.getElementById('addEquipModal').style.display='flex'" data-en="+ List Your Equipment" data-ta="+ உங்கள் இயந்திரம் பட்டியலிட">+ List Your Equipment</button>
+      {% endif %}
+    </div>
+    <div class="ga" id="equipGrid"></div>
+  </div>
+</section>
+<div class="modal-overlay" id="addEquipModal" style="display:none">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('addEquipModal').style.display='none'">✕</button>
+    <h3 data-en="List Equipment for Rent" data-ta="இயந்திரம் வாடகைக்கு பட்டியலிடுங்கள்">List Equipment for Rent</h3>
+    <form class="auth-form" onsubmit="addEquip(event)">
+      <div class="fg"><label data-en="Equipment Name" data-ta="இயந்திர பெயர்">Equipment Name</label><input type="text" id="eqName" class="fi" required/></div>
+      <div class="form-row">
+        <div class="fg"><label data-en="Type" data-ta="வகை">Type</label>
+          <select id="eqType" class="fi">
+            <option value="tractor">Tractor</option><option value="harvester">Harvester</option>
+            <option value="sprayer">Sprayer</option><option value="tiller">Tiller</option>
+          </select>
+        </div>
+        <div class="fg"><label data-en="Rate (₹/day)" data-ta="வாடகை (₹/நாள்)">Rate (₹/day)</label><input type="number" id="eqRate" class="fi" required/></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label data-en="District" data-ta="மாவட்டம்">District</label><input type="text" id="eqDist" class="fi" required/></div>
+        <div class="fg"><label data-en="Contact Phone" data-ta="தொலைபேசி">Contact Phone</label><input type="tel" id="eqPhone" class="fi" required/></div>
+      </div>
+      <button type="submit" class="btn btnP btnFull" data-en="List Equipment" data-ta="பட்டியலிடு">List Equipment</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

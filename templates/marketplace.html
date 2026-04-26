@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}FarmConnect Marketplace — AgroHub{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <span class="page-hero-icon">🛒</span>
+  <h1 data-en="FarmConnect Marketplace" data-ta="FarmConnect சந்தை">FarmConnect Marketplace</h1>
+  <p data-en="Buy directly from farmers — fresh produce at fair prices" data-ta="விவசாயிகளிடம் நேரடியாக வாங்குங்கள் — நியாயமான விலையில் புதிய பொருட்கள்">Buy directly from farmers — fresh produce at fair prices</p>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="market-toolbar">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" class="form-control search-inp"
+          data-ph-en="Search products... (tomato, onion...)"
+          data-ph-ta="பொருட்கள் தேடுங்கள்... (தக்காளி, வெங்காயம்...)"
+          placeholder="Search products..." oninput="filterProducts()"/>
+        <span class="search-icon">🔍</span>
+      </div>
+      <select class="form-control filter-sel" id="catFilter" onchange="filterProducts()">
+        <option value="" data-en="All Categories" data-ta="அனைத்து வகை">All Categories</option>
+        <option value="vegetables" data-en="Vegetables" data-ta="காய்கறிகள்">Vegetables</option>
+        <option value="fruits" data-en="Fruits" data-ta="பழங்கள்">Fruits</option>
+        <option value="grains" data-en="Grains" data-ta="தானியங்கள்">Grains</option>
+        <option value="spices" data-en="Spices" data-ta="மசாலா">Spices</option>
+      </select>
+      <select class="form-control filter-sel" id="distFilter" onchange="filterProducts()">
+        <option value="" data-en="All Districts" data-ta="அனைத்து மாவட்டங்கள்">All Districts</option>
+        <option>Salem</option><option>Coimbatore</option><option>Madurai</option>
+        <option>Erode</option><option>Trichy</option>
+      </select>
+      {% if request.session.user_id %}
+      <button class="btn btnP" onclick="document.getElementById('addModal').style.display='flex'" data-en="+ Sell Your Produce" data-ta="+ உங்கள் பொருட்களை விற்கவும்">+ Sell Your Produce</button>
+      {% else %}
+      <a href="/login/" class="btn btnO" data-en="Login to Sell" data-ta="விற்க உள்நுழைக">Login to Sell</a>
+      {% endif %}
+    </div>
+    <div class="products-grid grid-auto" id="productsGrid"></div>
+  </div>
+</section>
+
+<!-- Add Product Modal -->
+<div class="modal-overlay" id="addModal" style="display:none">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('addModal').style.display='none'">✕</button>
+    <h3 data-en="List Your Produce" data-ta="உங்கள் பொருட்களை பட்டியலிடுங்கள்">List Your Produce</h3>
+    <form class="auth-form" onsubmit="addProduct(event)">
+      <div class="fg"><label data-en="Product Name" data-ta="பொருளின் பெயர்">Product Name</label><input type="text" id="pName" class="fi" required/></div>
+      <div class="form-row">
+        <div class="fg"><label data-en="Price (₹/kg)" data-ta="விலை (₹/kg)">Price (₹/kg)</label><input type="number" id="pPrice" class="fi" required/></div>
+        <div class="fg"><label data-en="Quantity (kg)" data-ta="அளவு (kg)">Quantity (kg)</label><input type="number" id="pQty" class="fi" required/></div>
+      </div>
+      <div class="fg"><label data-en="Category" data-ta="வகை">Category</label>
+        <select id="pCat" class="fi">
+          <option value="vegetables">Vegetables</option><option value="fruits">Fruits</option>
+          <option value="grains">Grains</option><option value="spices">Spices</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btnP btnFull" data-en="Add to Market" data-ta="சந்தையில் சேர்க்க">Add to Market</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

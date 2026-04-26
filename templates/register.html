@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Register — AgroHub{% endblock %}
+{% block content %}
+<div class="authpg">
+  <div class="authl">
+    <div class="albrnd"><div class="alL">🌿</div><strong>AgroHub</strong></div>
+    <h1 data-en="Join Tamil Nadu Farmers!" data-ta="தமிழக விவசாயிகளுடன் சேருங்கள்!">Join Tamil Nadu Farmers!</h1>
+    <p data-en="Free account — unlock all crop info, market prices, loans, weather and more." data-ta="இலவச கணக்கு — பயிர் தகவல், சந்தை விலை, கடன்கள், வானிலை எல்லாம் பயன்படுத்துங்கள்.">Free account — unlock all crop info, market prices, loans, weather and more.</p>
+    <div class="alfeats">
+      <div class="alfeat"><span class="afi">✅</span><p data-en="100% Free for farmers — always" data-ta="விவசாயிகளுக்கு எப்போதும் 100% இலவசம்">100% Free for farmers — always</p></div>
+      <div class="alfeat"><span class="afi">🔒</span><p data-en="Your data is safe & private" data-ta="உங்கள் தரவு பாதுகாப்பானது">Your data is safe & private</p></div>
+      <div class="alfeat"><span class="afi">🌐</span><p data-en="Works in Tamil & English" data-ta="தமிழிலும் ஆங்கிலத்திலும்">Works in Tamil & English</p></div>
+    </div>
+  </div>
+  <div class="authr">
+    <div class="acard">
+      <div class="atabs">
+        <a href="/login/"    class="atab"     data-en="Login"    data-ta="உள்நுழைவு">Login</a>
+        <a href="/register/" class="atab on"  data-en="Register" data-ta="பதிவு">Register</a>
+      </div>
+      {% if error %}<div class="ae">⚠️ {{ error }}</div>{% endif %}
+      <form method="POST" id="regF">{% csrf_token %}
+        <div class="frow">
+          <div class="fg"><label class="fl" data-en="First Name" data-ta="முதல் பெயர்">First Name</label><input name="first_name" class="fi" placeholder="Ramu" required/></div>
+          <div class="fg"><label class="fl" data-en="Last Name" data-ta="கடைசி பெயர்">Last Name</label><input name="last_name" class="fi" placeholder="Kumar" required/></div>
+        </div>
+        <div class="fg">
+          <label class="fl" data-en="Mobile (used as username)" data-ta="மொபைல் எண் (username ஆக பயன்படும்)">Mobile (used as username)</label>
+          <input type="tel" name="phone" class="fi" placeholder="10-digit mobile number" pattern="[0-9]{10}" required/>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label class="fl" data-en="Role" data-ta="பங்கு">Role</label>
+            <select name="role" class="fi"><option value="farmer">Farmer</option><option value="buyer">Buyer</option><option value="merchant">Merchant</option></select>
+          </div>
+          <div class="fg">
+            <label class="fl" data-en="District" data-ta="மாவட்டம்">District</label>
+            <select name="district" class="fi">
+              <option value="">-- Select --</option>
+              <option>Salem</option><option>Coimbatore</option><option>Madurai</option><option>Trichy</option><option>Erode</option><option>Thanjavur</option><option>Tirunelveli</option><option>Vellore</option><option>Namakkal</option><option>Dindigul</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl" data-en="Password" data-ta="கடவுச்சொல்">Password</label>
+          <div class="inpw"><input type="password" name="password" id="rp" class="fi" placeholder="Min 8 characters" minlength="8" required oninput="chkStr(this.value)"/><button type="button" class="eye" onclick="toggleEye('rp',this)">👁</button></div>
+          <div class="sbar" id="sbar"></div>
+        </div>
+        <div class="fg">
+          <label class="fl" data-en="Confirm Password" data-ta="உறுதிப்படுத்தவும்">Confirm Password</label>
+          <div class="inpw"><input type="password" name="confirm_password" id="cp" class="fi" placeholder="Re-enter password" required/><button type="button" class="eye" onclick="toggleEye('cp',this)">👁</button></div>
+        </div>
+        <div class="agrow"><input type="checkbox" name="agree" required/><span data-en="I agree to Terms & Conditions" data-ta="விதிமுறைகளை ஏற்கிறேன்">I agree to Terms & Conditions</span></div>
+        <button type="submit" class="btn btnP btnFull" data-en="Create Free Account →" data-ta="இலவச கணக்கு உருவாக்கு →">Create Free Account →</button>
+      </form>
+      <p class="aswitch"><span data-en="Already have an account?" data-ta="கணக்கு உள்ளதா?">Already have an account?</span> <a href="/login/" data-en="Login here" data-ta="இங்கே உள்நுழைக">Login here</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const rf=document.getElementById('regF');
+if(rf)rf.addEventListener('submit',e=>{const p1=document.getElementById('rp')?.value,p2=document.getElementById('cp')?.value;if(p1!==p2){e.preventDefault();showToast('❌ Passwords do not match!');}});
+</script>
+{% endblock %}

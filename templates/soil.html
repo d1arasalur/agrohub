@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}SoilTest Hub{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <span class="page-hero-icon">🧪</span>
+  <h1 data-en="SoilTest Hub" data-ta="SoilTest Hub">SoilTest Hub</h1>
+  <p data-en="Enter your soil test data and get crop & fertilizer recommendations" data-ta="மண் தரவை உள்ளிட்டு பயிர் & உர பரிந்துரைகள் பெறுங்கள்">Enter your soil test data and get crop & fertilizer recommendations</p>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="g2" style="gap:32px">
+      <div class="card">
+        <h3 style="margin-bottom:20px" data-en="Enter Soil Data" data-ta="மண் தரவு உள்ளிடவும்">Enter Soil Data</h3>
+        <form onsubmit="analyzeSoil(event)">
+          <div class="fg"><label data-en="Soil Type" data-ta="மண் வகை">Soil Type</label>
+            <select id="sSoilType" class="fi">
+              <option value="clay" data-en="Clay Soil" data-ta="களிமண்">Clay Soil</option>
+              <option value="sandy" data-en="Sandy Soil" data-ta="மணல் மண்">Sandy Soil</option>
+              <option value="loamy" data-en="Loamy Soil" data-ta="கலப்பு மண்">Loamy Soil</option>
+              <option value="red" data-en="Red Soil" data-ta="செம்மண்">Red Soil</option>
+              <option value="black" data-en="Black Soil" data-ta="கருப்பு மண்">Black Soil</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>pH</label><input type="number" id="sPH" class="fi" step="0.1" min="0" max="14" placeholder="6.5" required/></div>
+            <div class="fg"><label data-en="Nitrogen (kg/ha)" data-ta="நைட்ரஜன் (kg/ha)">Nitrogen (kg/ha)</label><input type="number" id="sN" class="fi" placeholder="280" required/></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label data-en="Phosphorus (kg/ha)" data-ta="பாஸ்பரஸ் (kg/ha)">Phosphorus (kg/ha)</label><input type="number" id="sP" class="fi" placeholder="22" required/></div>
+            <div class="fg"><label data-en="Potassium (kg/ha)" data-ta="பொட்டாசியம் (kg/ha)">Potassium (kg/ha)</label><input type="number" id="sK" class="fi" placeholder="180" required/></div>
+          </div>
+          <div class="fg"><label data-en="Organic Carbon (%)" data-ta="கரிம கார்பன் (%)">Organic Carbon (%)</label><input type="number" id="sOC" class="fi" step="0.01" placeholder="0.75" required/></div>
+          <button type="submit" class="btn btnP btnFull" data-en="Get Recommendations" data-ta="பரிந்துரைகள் பெறுங்கள்">Get Recommendations</button>
+        </form>
+      </div>
+      <div class="card" id="soilResult">
+        <div style="text-align:center;color:var(--text-light);padding:60px 0">
+          <div style="font-size:3rem;margin-bottom:12px">🌱</div>
+          <p data-en="Fill soil data to get recommendations" data-ta="மண் தரவு உள்ளிட்டு பரிந்துரைகள் பெறுங்கள்">Fill soil data to get recommendations</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

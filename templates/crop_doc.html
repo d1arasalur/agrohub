@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}CropDoc — AI Disease Detection{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <span class="page-hero-icon">🔬</span>
+  <h1 data-en="CropDoc — AI Crop Doctor" data-ta="CropDoc — AI பயிர் மருத்துவர்">CropDoc — AI Crop Doctor</h1>
+  <p data-en="Upload a photo of your crop to detect disease instantly" data-ta="உங்கள் பயிரின் படம் பதிவேற்றி நோயை உடனடியாக கண்டறியுங்கள்">Upload a photo of your crop to detect disease instantly</p>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="g2" style="gap:32px;margin-bottom:48px">
+      <div>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('cropImg').click()">
+          <div class="upload-icon">📸</div>
+          <p data-en="Click to upload crop photo" data-ta="பயிர் படம் பதிவேற்ற கிளிக் செய்யவும்">Click to upload crop photo</p>
+          <span data-en="Supports JPG, PNG" data-ta="JPG, PNG ஆதரிக்கிறது">Supports JPG, PNG</span>
+          <input type="file" id="cropImg" accept="image/*" hidden onchange="analyzeImage(event)"/>
+          <img id="previewImg" style="display:none;max-width:100%;border-radius:12px;margin-top:16px"/>
+        </div>
+      </div>
+      <div class="diagnosis-result card" id="diagResult">
+        <div style="text-align:center;color:var(--text-light);padding:40px 0">
+          <div style="font-size:3rem;margin-bottom:12px">🌱</div>
+          <p data-en="Upload a photo to get diagnosis" data-ta="படம் பதிவேற்றிய பின் பலன் காண்பிக்கப்படும்">Upload a photo to get diagnosis</p>
+        </div>
+      </div>
+    </div>
+    <h3 style="margin-bottom:24px" data-en="Common Crop Diseases" data-ta="பொதுவான பயிர் நோய்கள்">Common Crop Diseases</h3>
+    <div class="ga" id="diseaseGrid"></div>
+  </div>
+</section>
+{% endblock %}

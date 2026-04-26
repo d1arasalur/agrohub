@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Login — AgroHub{% endblock %}
+{% block content %}
+<div class="authpg">
+  <div class="authl">
+    <div class="albrnd"><div class="alL">🌿</div><strong>AgroHub</strong></div>
+    <h1 data-en="Welcome back, Farmer!" data-ta="மீண்டும் வரவேற்கிறோம்!">Welcome back, Farmer!</h1>
+    <p data-en="Login to access crop guides, live market prices, weather forecasts and all farming tools." data-ta="பயிர் வழிகாட்டி, நேரலை சந்தை விலை, வானிலை மற்றும் எல்லா கருவிகளையும் பயன்படுத்த உள்நுழையுங்கள்.">Login to access crop guides, live market prices, weather forecasts and all farming tools.</p>
+    <div class="alfeats">
+      <div class="alfeat"><span class="afi">🌱</span><p data-en="Complete crop growing & harvesting guides" data-ta="முழுமையான பயிர் சாகுபடி & அறுவடை வழிகாட்டி">Complete crop growing & harvesting guides</p></div>
+      <div class="alfeat"><span class="afi">📊</span><p data-en="Live mandi prices from all Tamil Nadu districts" data-ta="தமிழ்நாடு மாவட்டங்களின் நேரலை மண்டி விலை">Live mandi prices from all Tamil Nadu districts</p></div>
+      <div class="alfeat"><span class="afi">🏦</span><p data-en="Government schemes & loan eligibility check" data-ta="அரசு திட்டங்கள் & கடன் தகுதி சரிபார்ப்பு">Government schemes & loan eligibility check</p></div>
+    </div>
+  </div>
+  <div class="authr">
+    <div class="acard">
+      <div class="atabs">
+        <a href="/login/"    class="atab on"  data-en="Login"    data-ta="உள்நுழைவு">Login</a>
+        <a href="/register/" class="atab"     data-en="Register" data-ta="பதிவு">Register</a>
+      </div>
+      {% if error %}<div class="ae">⚠️ {{ error }}</div>{% endif %}
+      <form method="POST">{% csrf_token %}
+        <div class="fg">
+          <label class="fl" data-en="Mobile Number / Username" data-ta="மொபைல் எண் / பயனர் பெயர்">Mobile Number / Username</label>
+          <input name="username" class="fi" placeholder="Enter mobile or username" data-ph-en="Enter mobile or username" data-ph-ta="மொபைல் அல்லது பயனர் பெயர்" required autofocus/>
+        </div>
+        <div class="fg">
+          <label class="fl" data-en="Password" data-ta="கடவுச்சொல்">Password</label>
+          <div class="inpw">
+            <input type="password" name="password" id="lp" class="fi" placeholder="Enter password" data-ph-en="Enter password" data-ph-ta="கடவுச்சொல் உள்ளிடவும்" required/>
+            <button type="button" class="eye" onclick="toggleEye('lp',this)">👁</button>
+          </div>
+        </div>
+        <div class="fcheck">
+          <label><input type="checkbox" name="remember"/> <span data-en="Remember me" data-ta="என்னை நினைவில் வை">Remember me</span></label>
+          <a href="#" style="color:var(--g700)" data-en="Forgot password?" data-ta="மறந்தீர்களா?">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btnP btnFull" data-en="Login to AgroHub →" data-ta="AgroHub-ல் உள்நுழைக →">Login to AgroHub →</button>
+      </form>
+      <p class="aswitch"><span data-en="New to AgroHub?" data-ta="புதியவரா?">New to AgroHub?</span> <a href="/register/" data-en="Register Free" data-ta="இலவசமாக பதிவு செய்க">Register Free</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

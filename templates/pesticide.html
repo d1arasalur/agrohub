@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Pesticide Guide — AgroHub{% endblock %}
+{% block content %}
+<div class="phero">
+  <span class="phi">🛡️</span>
+  <h1 data-en="Pesticide Guide" data-ta="பூச்சி மருந்து வழிகாட்டி">Pesticide Guide</h1>
+  <p data-en="Safe use of pesticides and organic alternatives for crop protection in Tamil Nadu" data-ta="பயிர் பாதுகாப்பிற்கான பூச்சிமருந்துகள் மற்றும் இயற்கை மாற்றுகள்">Safe use of pesticides and organic alternatives for crop protection</p>
+</div>
+<section class="sec">
+  <div class="container">
+    <div class="as" style="margin-bottom:20px">
+      ⚠️ <strong data-en="Safety First:" data-ta="முதலில் பாதுகாப்பு:">Safety First:</strong>
+      <span data-en=" Always wear gloves, mask and goggles when handling pesticides. Keep away from children. Follow PHI (Pre-Harvest Interval) strictly." data-ta=" பூச்சி மருந்து பயன்படுத்தும்போது கைக்கவசம், மாஸ்க், கண்ணாடி அணியுங்கள். குழந்தைகளிடம் இருந்து விலக்கி வைக்கவும்."> Always wear gloves, mask and goggles. Keep away from children. Follow PHI strictly.</span>
+    </div>
+    <div class="tabs">
+      <a href="/pesticide/" class="tab {% if not active_type %}on{% endif %}" data-en="All" data-ta="எல்லாம்">All</a>
+      <a href="?type=insecticide" class="tab {% if active_type == 'insecticide' %}on{% endif %}" data-en="Insecticide" data-ta="பூச்சி மருந்து">Insecticide</a>
+      <a href="?type=fungicide"   class="tab {% if active_type == 'fungicide' %}on{% endif %}"   data-en="Fungicide"   data-ta="பூஞ்சை மருந்து">Fungicide</a>
+      <a href="?type=herbicide"   class="tab {% if active_type == 'herbicide' %}on{% endif %}"   data-en="Herbicide"   data-ta="களை மருந்து">Herbicide</a>
+      <a href="?type=organic"     class="tab {% if active_type == 'organic' %}on{% endif %}"     data-en="Organic"     data-ta="இயற்கை">Organic</a>
+    </div>
+    {% if pesticides %}
+    <div class="g2">
+      {% for p in pesticides %}
+      <div class="pestcard {{ p.ptype }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <div>
+            <div class="pestn">{{ p.emoji }} {{ p.name }}</div>
+            <div class="pestai">{{ p.active_ingredient }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+            <span class="bg {% if p.ptype == 'insecticide' %}bgr{% elif p.ptype == 'fungicide' %}bgp{% elif p.ptype == 'organic' %}bgg{% else %}bga{% endif %}">{{ p.get_ptype_display }}</span>
+            {% if p.is_organic %}<span class="bg bgg">✅ Organic</span>{% endif %}
+          </div>
+        </div>
+        <div class="pestrow">
+          <div class="pestlbl" data-en="Target Pests/Diseases" data-ta="இலக்கு பூச்சிகள்/நோய்கள்">Target Pests/Diseases</div>
+          <div class="pestval">{{ p.target_pests }}</div>
+        </div>
+        <div class="pestrow">
+          <div class="pestlbl" data-en="Dosage" data-ta="அளவு">Dosage</div>
+          <div class="pestval">{{ p.dosage }}</div>
+        </div>
+        <div class="pestrow">
+          <div class="pestlbl" data-en="Pre-Harvest Interval (PHI)" data-ta="அறுவடைக்கு முந்தைய இடைவெளி">Pre-Harvest Interval (PHI)</div>
+          <div class="pestval" style="font-weight:700;color:#b91c1c">{{ p.safety_interval }}</div>
+        </div>
+        {% if p.is_organic %}
+        <div class="safe">🌿 {{ p.precautions }}</div>
+        {% else %}
+        <div class="warn">⚠️ {{ p.precautions }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:60px;color:var(--c500)">
+      <p data-en="Run: python manage.py seed_data" data-ta="seed_data command இயக்கவும்">Run: python manage.py seed_data</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

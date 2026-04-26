@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}AgroHub — Tamil Nadu Farmers Platform{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="herobg"><div class="orb o1"></div><div class="orb o2"></div><div class="grid"></div></div>
+  <div class="hL">
+    <div class="htag"><span class="dot"></span><span data-en="Tamil Nadu's #1 Agro Platform" data-ta="தமிழ்நாட்டின் #1 விவசாய தளம்">Tamil Nadu's #1 Agro Platform</span></div>
+    <h1><span data-en="Everything a Farmer Needs" data-ta="விவசாயிக்கு தேவையானது">Everything a Farmer Needs</span><br/><span class="hl" data-en="In One Place." data-ta="எல்லாம் ஒரே இடத்தில்.">In One Place.</span></h1>
+    <p data-en="Crop guides, AI disease detection, live market prices, government loans — all in Tamil & English." data-ta="பயிர் வழிகாட்டி, AI நோய் கண்டறிதல், சந்தை விலை, அரசு கடன்கள் — தமிழிலும் ஆங்கிலத்திலும்.">Crop guides, AI disease detection, live market prices, government loans — all in Tamil & English.</p>
+    <div class="hbtns">
+      <a href="/register/" class="btn btnP btnLg" data-en="Get Started Free →" data-ta="இலவசமாக தொடங்கு →">Get Started Free →</a>
+      <a href="/crops/"    class="btn btnW btnLg" data-en="Explore Crops"       data-ta="பயிர்கள் பார்க்க">Explore Crops</a>
+    </div>
+    <div class="hstats">
+      <div class="hs"><strong>7+</strong><span data-en="Major Crops" data-ta="முக்கிய பயிர்கள்">Major Crops</span></div>
+      <div class="hs"><strong>38</strong><span data-en="Districts" data-ta="மாவட்டங்கள்">Districts</span></div>
+      <div class="hs"><strong>Free</strong><span data-en="Always" data-ta="எப்போதும்">Always</span></div>
+    </div>
+  </div>
+  <div class="hR">
+    <div class="horb"></div>
+    <div class="fc fc1"><span>🌾</span><span data-en="Crop health: Good" data-ta="பயிர் நலம்: நல்லது">Crop health: Good</span></div>
+    <div class="fc fc2"><span>💰</span><span>Tomato ₹42/kg ↑</span></div>
+    <div class="fc fc3"><span>🌧️</span><span data-en="Rain expected" data-ta="மழை வருகிறது">Rain expected</span></div>
+  </div>
+</section>
+
+<section class="feats">
+  <div class="container">
+    <div class="shead">
+      <h2 data-en="All Services in One Place" data-ta="எல்லா சேவைகளும் ஒரே இடத்தில்">All Services in One Place</h2>
+      <p data-en="Nine powerful tools built for Tamil Nadu farmers" data-ta="தமிழக விவசாயிகளுக்காக உருவாக்கப்பட்ட 9 சேவைகள்">Nine powerful tools built for Tamil Nadu farmers</p>
+    </div>
+    <div class="fgrid">
+      {% for f in features %}
+      <a href="{{ f.url }}" class="fcard">
+        <div class="fico" style="background:{{ f.bg }}">{{ f.icon }}</div>
+        <div class="fname">{{ f.name }}</div>
+        <div class="fdesc" data-en="{{ f.desc_en }}" data-ta="{{ f.desc_ta }}">{{ f.desc_en }}</div>
+        <span class="farr">→</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="sec secalt">
+  <div class="container">
+    <div class="shead"><h2 data-en="How It Works" data-ta="எப்படி பயன்படுத்துவது?">How It Works</h2></div>
+    <div class="steps">
+      <div class="step"><div class="snum">1</div><h3 data-en="Register Free" data-ta="பதிவு செய்யுங்கள்">Register Free</h3><p data-en="Create your account in 2 minutes with your mobile number." data-ta="உங்கள் மொபைல் எண்ணால் 2 நிமிடத்தில் பதிவு செய்யுங்கள்.">Create your account in 2 minutes with your mobile number.</p></div>
+      <div class="sarr">→</div>
+      <div class="step"><div class="snum">2</div><h3 data-en="Explore Tools" data-ta="கருவிகள் பயன்படுத்துங்கள்">Explore Tools</h3><p data-en="Check crop guides, live prices, weather and apply for loans." data-ta="பயிர் வழிகாட்டி, விலை, வானிலை, கடன் — எல்லாம் பயன்படுத்துங்கள்.">Check crop guides, live prices, weather and apply for loans.</p></div>
+      <div class="sarr">→</div>
+      <div class="step"><div class="snum">3</div><h3 data-en="Grow Profit" data-ta="லாபம் அதிகரியுங்கள்">Grow Profit</h3><p data-en="Make smarter farming decisions and increase your income." data-ta="சிறந்த முடிவுகளால் வருமானம் அதிகரியுங்கள்.">Make smarter farming decisions and increase your income.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="container">
+    <div class="cta">
+      <h2 data-en="Start your smart farming journey today" data-ta="இன்றே நவீன விவசாயம் தொடங்குங்கள்">Start your smart farming journey today</h2>
+      <p data-en="Free forever for farmers. No hidden charges. Tamil & English." data-ta="விவசாயிகளுக்கு எப்போதும் இலவசம். தமிழிலும் ஆங்கிலத்திலும்.">Free forever for farmers. No hidden charges. Tamil & English.</p>
+      <a href="/register/" class="btn btnP btnLg" data-en="Join AgroHub Free →" data-ta="AgroHub-ல் இணையுங்கள் →">Join AgroHub Free →</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
