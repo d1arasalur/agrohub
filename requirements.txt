@@ -1,5 +1,5 @@
-echo django>=4.2 > requirements.txt
-echo psycopg2-binary >> requirements.txt
-echo gunicorn >> requirements.txt
-echo whitenoise >> requirements.txt
-echo dj-database-url >> requirements.txt
+django>=4.2
+psycopg2-binary
+gunicorn
+whitenoise
+dj-database-url 
