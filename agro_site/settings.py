@@ -1,8 +1,13 @@
-import dj_database_url
+from pathlib import Path
 import os
+import dj_database_url
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key')
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-agrohub-local-dev-key-2025')
+
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -26,7 +31,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'agro_site.urls'
 
 TEMPLATES = [
@@ -47,16 +51,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'agro_site.wsgi.application'
 
-# ============================================================
-# DATABASE — pgAdmin-ல் 'agrohub_db' database உருவாக்கி
-# PASSWORD உங்கள் pgAdmin password-ஆக மாற்றவும்
-# ============================================================
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600
-    )
-}
+# ── DATABASE ──────────────────────────────────────────────
+# Railway provides DATABASE_URL automatically
+# Local: set your own DATABASE_URL or fallback below
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=False,
+        )
+    }
+else:
+    # Local PostgreSQL fallback
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'agrohub_db',
+            'USER': 'postgres',
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'your_password_here'),
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 AUTH_USER_MODEL = 'agro_site.User'
 LOGIN_URL = '/login/'
@@ -66,8 +85,11 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# Static — only used for admin, not our pages
+# ── STATIC FILES ──────────────────────────────────────────
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
