@@ -31,6 +31,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://echo-web-production-ef75.up.railway.app',
+    'https://*.up.railway.app',
+]
+
 ROOT_URLCONF = 'agro_site.urls'
 
 TEMPLATES = [
