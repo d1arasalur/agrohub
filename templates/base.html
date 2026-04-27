@@ -543,7 +543,9 @@ function applyLang(l){
   lg=l;localStorage.setItem('agl',l);
   document.querySelectorAll('[data-en]').forEach(el=>{
     const t=l==='ta'?el.getAttribute('data-ta'):el.getAttribute('data-en');
-    if(t)el.textContent=t;
+    if(!t)return;
+    /* Only update leaf nodes — skip elements with child elements to preserve layout */
+    if(el.children.length===0) el.textContent=t;
   });
   document.querySelectorAll('[data-ph-en]').forEach(el=>{
     el.placeholder=l==='ta'?(el.getAttribute('data-ph-ta')||''):(el.getAttribute('data-ph-en')||'');
