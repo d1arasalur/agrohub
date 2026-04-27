@@ -1,19 +1,405 @@
 {% extends 'base.html' %}
-{% block title %}AgriLearn — Farm Education{% endblock %}
+{% block title %}AgriLearn — AgroHub{% endblock %}
 {% block content %}
-<div class="page-hero">
-  <span class="page-hero-icon">🎓</span>
+
+<div class="phero">
+  <span class="phi">🎓</span>
   <h1 data-en="AgriLearn" data-ta="AgriLearn">AgriLearn</h1>
-  <p data-en="Learn modern farming in Tamil & English" data-ta="நவீன விவசாயத்தை தமிழிலும் ஆங்கிலத்திலும் கற்றுக்கொள்ளுங்கள்">Learn modern farming in Tamil & English</p>
+  <p data-en="Complete farming guide with photos — irrigation, harvesting, soil, pest control in Tamil & English" data-ta="முழுமையான விவசாய வழிகாட்டி — நீர்பாசனம், அறுவடை, மண், பூச்சி கட்டுப்பாடு">Complete farming guide with photos — irrigation, harvesting, soil, pest control</p>
 </div>
-<section class="section">
-  <div class="container">
-    <div class="tab-nav">
-      <button class="tab on" onclick="showLearnTab('videos',this)">📹 <span data-en="Videos" data-ta="வீடியோ">Videos</span></button>
-      <button class="tab" onclick="showLearnTab('articles',this)">📰 <span data-en="Articles" data-ta="கட்டுரைகள்">Articles</span></button>
-      <button class="tab" onclick="showLearnTab('courses',this)">📚 <span data-en="Courses" data-ta="பாடநெறிகள்">Courses</span></button>
-    </div>
-    <div id="learnContent" class="ga"></div>
+
+<section class="sec">
+<div class="container">
+
+  <!-- Category Tabs -->
+  <div class="tabs" style="margin-bottom:28px;flex-wrap:wrap">
+    <button class="tab on" onclick="showCat('all',this)" data-en="All Topics" data-ta="அனைத்து தலைப்புகள்">All Topics</button>
+    <button class="tab" onclick="showCat('irrigation',this)" data-en="💧 Irrigation" data-ta="💧 நீர்பாசனம்">💧 Irrigation</button>
+    <button class="tab" onclick="showCat('harvest',this)" data-en="🌾 Harvesting" data-ta="🌾 அறுவடை">🌾 Harvesting</button>
+    <button class="tab" onclick="showCat('soil',this)" data-en="🧪 Soil Health" data-ta="🧪 மண் ஆரோக்கியம்">🧪 Soil Health</button>
+    <button class="tab" onclick="showCat('pest',this)" data-en="🛡️ Pest Control" data-ta="🛡️ பூச்சி கட்டுப்பாடு">🛡️ Pest Control</button>
+    <button class="tab" onclick="showCat('modern',this)" data-en="🚀 Modern Farming" data-ta="🚀 நவீன விவசாயம்">🚀 Modern Farming</button>
+    <button class="tab" onclick="showCat('organic',this)" data-en="🌿 Organic" data-ta="🌿 இயற்கை">🌿 Organic</button>
   </div>
+
+  <!-- ══════════════════════════════════ IRRIGATION ══════════════════════════════════ -->
+  <div class="lcat" data-cat="irrigation">
+    <h2 class="lsec-title">💧 <span data-en="Irrigation Methods" data-ta="நீர்பாசன முறைகள்">Irrigation Methods</span></h2>
+
+    <div class="g2" style="margin-bottom:24px">
+
+      <!-- Drip Irrigation -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&q=80" alt="Drip Irrigation" class="limg" onerror="this.src='https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80'"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#dbeafe;color:#1d4ed8">💧 <span data-en="Water Saving" data-ta="நீர் சேமிப்பு">Water Saving</span></span>
+          <h3 class="ltitle" data-en="Drip Irrigation" data-ta="நீர்த்துளி பாசனம்">Drip Irrigation</h3>
+          <p class="ldesc" data-en="Water is delivered directly to plant roots through small tubes. Saves 40–60% water compared to flood irrigation. Best for vegetables, fruits, cotton and sugarcane." data-ta="சிறிய குழாய்கள் மூலம் நேரடியாக தாவர வேர்களுக்கு தண்ணீர் வழங்கப்படுகிறது. வெள்ள நீர்பாசனத்துடன் ஒப்பிடும்போது 40-60% நீர் சேமிக்கப்படுகிறது. காய்கறிகள், பழங்கள், பருத்தி மற்றும் கரும்புக்கு சிறந்தது.">Water is delivered directly to plant roots through small tubes. Saves 40–60% water. Best for vegetables, fruits and sugarcane.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Install main pipe from water source" data-ta="நீர் ஆதாரத்திலிருந்து முதன்மை குழாய் அமைக்கவும்">Install main pipe from water source</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Lay lateral pipes along crop rows" data-ta="பயிர் வரிசைகளில் பக்க குழாய்கள் போடவும்">Lay lateral pipes along crop rows</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Place drippers every 30–60 cm" data-ta="ஒவ்வொரு 30-60 செமீக்கும் டிரிப்பர்கள் வைக்கவும்">Place drippers every 30–60 cm</span></div>
+            <div class="lstep"><span class="lstep-n">4</span><span data-en="Run 2–4 hours daily based on crop" data-ta="பயிருக்கு ஏற்ப தினமும் 2-4 மணி நேரம் இயக்கவும்">Run 2–4 hours daily based on crop</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="Govt subsidy: 45–90% on drip system cost. Apply at Agriculture Dept." data-ta="அரசு மானியம்: டிரிப் அமைப்பு செலவில் 45-90%. விவசாயத் துறையில் விண்ணப்பிக்கவும்.">Govt subsidy: 45–90% on drip system cost. Apply at Agriculture Dept.</span></div>
+        </div>
+      </div>
+
+      <!-- Sprinkler -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" alt="Sprinkler" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#d1fae5;color:#065f46">🌧️ <span data-en="Uniform Coverage" data-ta="சீரான கவரேஜ்">Uniform Coverage</span></span>
+          <h3 class="ltitle" data-en="Sprinkler Irrigation" data-ta="தெளிப்பு நீர்பாசனம்">Sprinkler Irrigation</h3>
+          <p class="ldesc" data-en="Water is sprayed over crops like artificial rain. Good for uneven land, groundnut, wheat, ragi and vegetables. Saves 25–40% water vs flood irrigation." data-ta="செயற்கை மழை போல் பயிர்களின் மீது தண்ணீர் தெளிக்கப்படுகிறது. ஏற்றத்தாழ்வான நிலம், நிலக்கடலை, கோதுமை, ராகி மற்றும் காய்கறிகளுக்கு நல்லது.">Water is sprayed over crops like artificial rain. Good for uneven land, groundnut, wheat, ragi. Saves 25–40% water.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Set up mainline and sub-mainline pipes" data-ta="முதன்மை மற்றும் துணை குழாய்கள் அமைக்கவும்">Set up mainline and sub-mainline pipes</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Install sprinkler heads at intervals" data-ta="இடைவெளிகளில் ஸ்பிரிங்க்லர் தலைகளை நிறுவவும்">Install sprinkler heads at intervals</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Run 1–2 hours early morning or evening" data-ta="காலை அல்லது மாலையில் 1-2 மணி நேரம் இயக்கவும்">Run 1–2 hours early morning or evening</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="Best time: 6–9 AM or 5–7 PM. Avoid midday to reduce evaporation loss." data-ta="சிறந்த நேரம்: காலை 6-9 அல்லது மாலை 5-7. ஆவியாதல் இழப்பை குறைக்க நண்பகலில் தவிர்க்கவும்.">Best time: 6–9 AM or 5–7 PM. Avoid midday to reduce evaporation loss.</span></div>
+        </div>
+      </div>
+
+      <!-- Flood/Furrow -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&q=80" alt="Flood Irrigation" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#fef9c3;color:#854d0e">🌊 <span data-en="Traditional" data-ta="பாரம்பரியம்">Traditional</span></span>
+          <h3 class="ltitle" data-en="Flood / Furrow Irrigation" data-ta="வெள்ள / சால் நீர்பாசனம்">Flood / Furrow Irrigation</h3>
+          <p class="ldesc" data-en="Water flows along furrows between crop rows. Most common for paddy, sugarcane. Low initial cost but uses more water. Best for clay-loam soils with flat land." data-ta="பயிர் வரிசைகளுக்கு இடையில் சால்களில் தண்ணீர் ஓடுகிறது. நெல், கரும்புக்கு மிகவும் பொதுவானது. குறைந்த ஆரம்ப செலவு ஆனால் அதிக தண்ணீர் தேவை.">Water flows along furrows between rows. Common for paddy, sugarcane. Low cost but uses more water. Best for clay-loam flat land.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Level the field properly (1–2% slope)" data-ta="வயலை சரியாக சமன் செய்யவும் (1-2% சாய்வு)">Level the field properly (1–2% slope)</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Make furrows 25–30 cm deep between rows" data-ta="வரிசைகளுக்கு இடையில் 25-30 செமீ ஆழமான சால்கள் வெட்டவும்">Make furrows 25–30 cm deep between rows</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Open water channel, allow controlled flow" data-ta="நீர் கால்வாய் திறந்து கட்டுப்படுத்தப்பட்ட ஓட்டம் அனுமதிக்கவும்">Open water channel, allow controlled flow</span></div>
+          </div>
+          <div class="ltip">⚠️ <span data-en="Avoid waterlogging — excess water causes root rot. Ensure proper drainage." data-ta="நீர் தேங்குவதை தவிர்க்கவும் — அதிக தண்ணீர் வேர் அழுகலை ஏற்படுத்தும். சரியான வடிகால் உறுதி செய்யவும்.">Avoid waterlogging — excess water causes root rot. Ensure proper drainage.</span></div>
+        </div>
+      </div>
+
+      <!-- Rainwater Harvesting -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80" alt="Rainwater" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#e0f2fe;color:#0369a1">☔ <span data-en="Free Water" data-ta="இலவச நீர்">Free Water</span></span>
+          <h3 class="ltitle" data-en="Rainwater Harvesting" data-ta="மழைநீர் சேகரிப்பு">Rainwater Harvesting</h3>
+          <p class="ldesc" data-en="Collect and store rainwater in farm ponds for irrigation during dry periods. Reduces dependency on borewells. One-time investment for long-term water security." data-ta="வறட்சி காலத்தில் நீர்பாசனத்திற்காக பண்ணை குளங்களில் மழைநீர் சேகரித்து சேமிக்கவும். ஆழ்துளை கிணறுகளை சார்ந்திருப்பதை குறைக்கிறது.">Collect rainwater in farm ponds. Reduces borewell dependency. One-time investment for long-term water security.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Dig farm pond (20×20×3 m minimum)" data-ta="பண்ணை குளம் வெட்டவும் (குறைந்தது 20×20×3 மீ)">Dig farm pond (20×20×3 m minimum)</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Line with HDPE sheet to prevent seepage" data-ta="கசிவு தடுக்க HDPE தாளால் லைனிங் செய்யவும்">Line with HDPE sheet to prevent seepage</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Connect drip system from farm pond" data-ta="பண்ணை குளத்திலிருந்து டிரிப் அமைப்பை இணைக்கவும்">Connect drip system from farm pond</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="TNAU subsidy: Up to ₹1 lakh for farm pond construction. Apply at Block Agri Office." data-ta="TNAU மானியம்: பண்ணை குளம் கட்டுமானத்திற்கு ₹1 லட்சம் வரை. வட்ட விவசாய அலுவலகத்தில் விண்ணப்பிக்கவும்.">TNAU subsidy: Up to ₹1 lakh for farm pond. Apply at Block Agriculture Office.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ HARVESTING ══════════════════════════════════ -->
+  <div class="lcat" data-cat="harvest">
+    <h2 class="lsec-title">🌾 <span data-en="Harvesting Methods" data-ta="அறுவடை முறைகள்">Harvesting Methods</span></h2>
+    <div class="g2" style="margin-bottom:24px">
+
+      <!-- Paddy Harvesting -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1589923158776-cb4485d99fd6?w=600&q=80" alt="Paddy Harvest" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#d1fae5;color:#065f46">🌾 <span data-en="Grain Crop" data-ta="தானிய பயிர்">Grain Crop</span></span>
+          <h3 class="ltitle" data-en="Paddy (Rice) Harvesting" data-ta="நெல் அறுவடை">Paddy (Rice) Harvesting</h3>
+          <p class="ldesc" data-en="Paddy is ready to harvest when 80% of grains turn golden yellow. Harvest at 20–22% moisture content for best quality. Use combine harvester for large fields." data-ta="80% தானியங்கள் தங்க மஞ்சள் நிறமாக மாறும்போது நெல் அறுவடைக்கு தயாராகிவிடும். சிறந்த தரத்திற்கு 20-22% ஈரப்பதத்தில் அறுவடை செய்யவும்.">Harvest when 80% grains turn golden yellow. Best at 20–22% moisture. Use combine harvester for large fields.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Stop irrigation 10–15 days before harvest" data-ta="அறுவடைக்கு 10-15 நாட்களுக்கு முன் நீர்பாசனம் நிறுத்தவும்">Stop irrigation 10–15 days before harvest</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Check grain moisture (use moisture meter)" data-ta="தானியத்தின் ஈரப்பதத்தை சரிபார்க்கவும் (ஈரப்பத மீட்டர் பயன்படுத்தவும்)">Check grain moisture (use moisture meter)</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Harvest early morning to reduce shattering" data-ta="உதிர்வை குறைக்க காலையில் அறுவடை செய்யவும்">Harvest early morning to reduce shattering</span></div>
+            <div class="lstep"><span class="lstep-n">4</span><span data-en="Thresh immediately after cutting" data-ta="வெட்டிய உடனே கதிர் அடிக்கவும்">Thresh immediately after cutting</span></div>
+            <div class="lstep"><span class="lstep-n">5</span><span data-en="Dry to 14% moisture before storage" data-ta="சேமிப்பிற்கு முன் 14% ஈரப்பதத்திற்கு உலர்த்தவும்">Dry to 14% moisture before storage</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="Combine harvester rental: ₹2500–4000/acre. Saves 80% of harvesting cost." data-ta="கம்பைன் ஹார்வெஸ்டர் வாடகை: ₹2500-4000/ஏக்கர். அறுவடை செலவில் 80% சேமிக்கப்படுகிறது.">Combine harvester rental: ₹2500–4000/acre. Saves 80% of harvesting cost.</span></div>
+        </div>
+      </div>
+
+      <!-- Vegetable Harvesting -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=600&q=80" alt="Vegetable Harvest" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#fce7f3;color:#9d174d">🥬 <span data-en="Vegetables" data-ta="காய்கறிகள்">Vegetables</span></span>
+          <h3 class="ltitle" data-en="Vegetable Harvesting" data-ta="காய்கறி அறுவடை">Vegetable Harvesting</h3>
+          <p class="ldesc" data-en="Harvest vegetables at right maturity — too early reduces quality, too late reduces shelf life. Use sharp knife/scissors. Harvest in early morning for maximum freshness." data-ta="சரியான முதிர்ச்சியில் காய்கறிகளை அறுவடை செய்யவும் — மிகவும் சீக்கிரம் தரத்தை குறைக்கும், மிகவும் தாமதமாக சேமிப்பு ஆயுளை குறைக்கும். கூர்மையான கத்தி பயன்படுத்தவும்.">Harvest at right maturity. Too early reduces quality, too late reduces shelf life. Use sharp knife. Harvest in early morning.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">🍅 Tomato</div>
+              <div style="color:var(--c600)" data-en="Full red, firm texture" data-ta="முழு சிவப்பு, உறுதியான அமைப்பு">Full red, firm texture</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">🌿 Lady Finger</div>
+              <div style="color:var(--c600)" data-en="7–10 cm length, tender" data-ta="7-10 செமீ நீளம், மென்மையானது">7–10 cm length, tender</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">🍆 Brinjal</div>
+              <div style="color:var(--c600)" data-en="Shiny skin, full size" data-ta="பளபளப்பான தோல், முழு அளவு">Shiny skin, full size</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">🥬 Cabbage</div>
+              <div style="color:var(--c600)" data-en="Firm head, 1–2 kg weight" data-ta="உறுதியான தலை, 1-2 கிலோ எடை">Firm head, 1–2 kg weight</div>
+            </div>
+          </div>
+          <div class="ltip">💡 <span data-en="Use clean sharp tools. Clean cuts prevent disease entry. Harvest in cool weather." data-ta="சுத்தமான கூர்மையான கருவிகளை பயன்படுத்தவும். சுத்தமான வெட்டுகள் நோய் நுழைவை தடுக்கும்.">Use clean sharp tools. Clean cuts prevent disease entry. Harvest in cool weather.</span></div>
+        </div>
+      </div>
+
+      <!-- Fruit Harvesting -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=600&q=80" alt="Fruit Harvest" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#fff7ed;color:#c2410c">🥭 <span data-en="Fruit Crops" data-ta="பழ பயிர்கள்">Fruit Crops</span></span>
+          <h3 class="ltitle" data-en="Fruit Crop Harvesting" data-ta="பழ பயிர் அறுவடை">Fruit Crop Harvesting</h3>
+          <p class="ldesc" data-en="Fruits must be harvested at correct maturity index. Unripe fruits don't ripen well after harvest. Handle carefully to avoid bruising — bruised fruits rot fast." data-ta="பழங்கள் சரியான முதிர்ச்சி குறியீட்டில் அறுவடை செய்யப்பட வேண்டும். முதிர்ச்சியடையாத பழங்கள் அறுவடைக்கு பிறகு நன்றாக பழுக்காது.">Harvest at correct maturity index. Handle carefully to avoid bruising — bruised fruits rot fast in storage.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Check skin color, firmness and size" data-ta="தோல் நிறம், உறுதி மற்றும் அளவை சரிபார்க்கவும்">Check skin color, firmness and size</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Use harvesting knife or clippers — don't pull" data-ta="அறுவடை கத்தி அல்லது கிளிப்பர்கள் பயன்படுத்தவும் — இழுக்காதீர்கள்">Use harvesting knife or clippers — don't pull</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Place gently in padded crates — no throwing" data-ta="மெதுவாக குஷன் கூடைகளில் வைக்கவும் — எறியாதீர்கள்">Place gently in padded crates — no throwing</span></div>
+            <div class="lstep"><span class="lstep-n">4</span><span data-en="Grade by size A, B, C — A grade fetches 40% more price" data-ta="A, B, C அளவு வகைப்படுத்தவும் — A தரம் 40% அதிக விலை பெறுகிறது">Grade by size A, B, C — A grade fetches 40% more price</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="Pre-cooling within 2 hours of harvest extends shelf life by 5–7 days." data-ta="அறுவடைக்கு 2 மணி நேரத்திற்குள் முன் குளிரூட்டல் சேமிப்பு ஆயுளை 5-7 நாட்கள் நீட்டிக்கும்.">Pre-cooling within 2 hours of harvest extends shelf life by 5–7 days.</span></div>
+        </div>
+      </div>
+
+      <!-- Post-Harvest -->
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1543257580-7269da773bf5?w=600&q=80" alt="Storage" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#f3e8ff;color:#6b21a8">🏪 <span data-en="Post Harvest" data-ta="அறுவடைக்கு பிந்தைய">Post Harvest</span></span>
+          <h3 class="ltitle" data-en="Post-Harvest Storage" data-ta="அறுவடைக்கு பிந்தைய சேமிப்பு">Post-Harvest Storage</h3>
+          <p class="ldesc" data-en="30–40% of produce is lost after harvest due to poor storage. Proper storage can double farmer income. Use hermetic bags for grains, cold rooms for vegetables and fruits." data-ta="மோசமான சேமிப்பு காரணமாக அறுவடைக்கு பிறகு 30-40% விளைபொருட்கள் வீணாகின்றன. சரியான சேமிப்பு விவசாயி வருமானத்தை இரட்டிப்பாக்கலாம்.">30–40% produce lost after harvest. Proper storage can double farmer income. Use hermetic bags for grains.</p>
+          <div style="display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0">
+            <div style="display:flex;align-items:center;gap:10px;background:var(--c50);border-radius:8px;padding:10px">
+              <span style="font-size:1.4rem">🌾</span>
+              <div style="font-size:.8rem"><strong data-en="Grains:" data-ta="தானியங்கள்:">Grains:</strong> <span data-en="Hermetic bags. 14% moisture, 6–12 months safe" data-ta="ஹெர்மெடிக் பைகள். 14% ஈரப்பதம், 6-12 மாதங்கள் பாதுகாப்பானது">Hermetic bags. 14% moisture, 6–12 months safe</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--c50);border-radius:8px;padding:10px">
+              <span style="font-size:1.4rem">🥬</span>
+              <div style="font-size:.8rem"><strong data-en="Vegetables:" data-ta="காய்கறிகள்:">Vegetables:</strong> <span data-en="2–8°C cold room. 7–21 days shelf life" data-ta="2-8°C குளிர் அறை. 7-21 நாட்கள் சேமிப்பு ஆயுள்">2–8°C cold room. 7–21 days shelf life</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:var(--c50);border-radius:8px;padding:10px">
+              <span style="font-size:1.4rem">🥭</span>
+              <div style="font-size:.8fm"><strong data-en="Fruits:" data-ta="பழங்கள்:">Fruits:</strong> <span data-en="8–12°C. Grade before storage, remove damaged" data-ta="8-12°C. சேமிக்கும் முன் வகைப்படுத்தவும், சேதமடைந்தவற்றை நீக்கவும்">8–12°C. Grade before storage, remove damaged</span></div>
+            </div>
+          </div>
+          <div class="ltip">💡 <span data-en="Hire cold van instead of truck — reduces transit loss from 15% to 3%." data-ta="லாரிக்கு பதிலாக குளிர் வேன் வாடகைக்கு எடுங்கள் — போக்குவரத்து இழப்பை 15% இல் இருந்து 3% ஆக குறைக்கிறது.">Hire cold van instead of truck — reduces transit loss from 15% to 3%.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ SOIL HEALTH ══════════════════════════════════ -->
+  <div class="lcat" data-cat="soil">
+    <h2 class="lsec-title">🧪 <span data-en="Soil Health Management" data-ta="மண் ஆரோக்கிய மேலாண்மை">Soil Health Management</span></h2>
+    <div class="g2" style="margin-bottom:24px">
+
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" alt="Soil Testing" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#fef9c3;color:#854d0e">🧪 <span data-en="Testing" data-ta="சோதனை">Testing</span></span>
+          <h3 class="ltitle" data-en="Soil Testing" data-ta="மண் சோதனை">Soil Testing</h3>
+          <p class="ldesc" data-en="Test soil every 3 years. Know pH, NPK levels and micronutrients before spending on fertilizers. Test costs only ₹10–25 at govt soil testing lab." data-ta="ஒவ்வொரு 3 ஆண்டுகளுக்கும் மண்ணை சோதிக்கவும். உரத்தில் செலவிடுவதற்கு முன் pH, NPK மட்டங்கள் மற்றும் நுண்ணூட்டச்சத்துக்களை அறிந்துகொள்ளுங்கள்.">Test soil every 3 years. Know pH, NPK before spending on fertilizers. Costs only ₹10–25 at govt soil testing lab.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Collect 5–6 soil samples from different spots" data-ta="வெவ்வேறு இடங்களில் இருந்து 5-6 மண் மாதிரிகள் சேகரிக்கவும்">Collect 5–6 soil samples from different spots</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Mix, dry, take 500g to soil testing lab" data-ta="கலந்து, உலர்த்தி, 500 கிராம் மண் சோதனை ஆய்வகத்திற்கு கொண்டு செல்லவும்">Mix, dry, take 500g to soil testing lab</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Wait 7–10 days for report" data-ta="அறிக்கைக்கு 7-10 நாட்கள் காத்திருக்கவும்">Wait 7–10 days for report</span></div>
+            <div class="lstep"><span class="lstep-n">4</span><span data-en="Apply fertilizers as per soil card recommendation" data-ta="மண் அட்டை பரிந்துரைப்படி உரம் இடவும்">Apply fertilizers as per soil card recommendation</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="Soil Health Card scheme: Free testing at govt labs. Visit nearest Krishi Vigyan Kendra." data-ta="மண் ஆரோக்கிய அட்டை திட்டம்: அரசு ஆய்வகங்களில் இலவச சோதனை. அருகிலுள்ள கிருஷி விக்யான் கேந்திரத்தை பார்வையிடவும்.">Soil Health Card: Free testing at govt labs. Visit nearest KVK or Agriculture Office.</span></div>
+        </div>
+      </div>
+
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1628352081506-83c43123422f?w=600&q=80" alt="Composting" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#d1fae5;color:#065f46">🌿 <span data-en="Organic Matter" data-ta="கரிம பொருள்">Organic Matter</span></span>
+          <h3 class="ltitle" data-en="Composting at Farm" data-ta="பண்ணையில் உரம் தயாரித்தல்">Composting at Farm</h3>
+          <p class="ldesc" data-en="Make your own compost from crop residues, cow dung and kitchen waste. Ready in 45–90 days. Costs almost nothing. Improves soil structure and water holding capacity." data-ta="பயிர் எச்சங்கள், மாட்டு சாணம் மற்றும் சமையலறை கழிவுகளிலிருந்து உங்கள் சொந்த உரம் தயாரிக்கவும். 45-90 நாட்களில் தயார். செலவே இல்லை.">Make compost from crop residues, cow dung, kitchen waste. Ready in 45–90 days. Almost free. Improves soil structure.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Layer dry waste + wet waste + soil alternately" data-ta="உலர் கழிவு + ஈர கழிவு + மண் மாறி மாறி அடுக்கவும்">Layer dry waste + wet waste + soil alternately</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Keep moisture like a wrung sponge" data-ta="பிழிந்த ஸ்பாஞ்ச் போல் ஈரப்பதம் பராமரிக்கவும்">Keep moisture like a wrung sponge</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Turn pile every 7 days for aeration" data-ta="காற்றோட்டத்திற்காக ஒவ்வொரு 7 நாட்களும் குவியலை திருப்பவும்">Turn pile every 7 days for aeration</span></div>
+            <div class="lstep"><span class="lstep-n">4</span><span data-en="Ready when dark, crumbly, earthy smell" data-ta="கருப்பு, நொறுங்கும், மண் வாசனை வரும்போது தயார்">Ready when dark, crumbly, earthy smell</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="Add Trichoderma 500g per tonne to speed up composting and suppress soil diseases." data-ta="உரம் தயாரிப்பை துரிதப்படுத்த ஒரு டன்னுக்கு 500 கிராம் Trichoderma சேர்க்கவும்.">Add Trichoderma 500g/tonne to speed composting and suppress soil diseases.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ PEST CONTROL ══════════════════════════════════ -->
+  <div class="lcat" data-cat="pest">
+    <h2 class="lsec-title">🛡️ <span data-en="Pest & Disease Control" data-ta="பூச்சி மற்றும் நோய் கட்டுப்பாடு">Pest & Disease Control</span></h2>
+    <div class="g2" style="margin-bottom:24px">
+
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=600&q=80" alt="IPM" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#dcfce7;color:#166534">🌿 <span data-en="IPM Method" data-ta="IPM முறை">IPM Method</span></span>
+          <h3 class="ltitle" data-en="Integrated Pest Management (IPM)" data-ta="ஒருங்கிணைந்த பூச்சி மேலாண்மை (IPM)">Integrated Pest Management (IPM)</h3>
+          <p class="ldesc" data-en="IPM combines biological, cultural and chemical methods to control pests with minimum pesticide use. Saves money, protects environment and human health." data-ta="IPM குறைந்தபட்ச பூச்சிமருந்து பயன்பாட்டுடன் பூச்சிகளை கட்டுப்படுத்த உயிரியல், கலாச்சார மற்றும் இரசாயன முறைகளை இணைக்கிறது.">IPM combines biological, cultural and chemical methods. Saves money and protects environment.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem;border:1px solid var(--g200)">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">🐛 Step 1: Monitor</div>
+              <div style="color:var(--c600)" data-en="Check crop weekly for pests" data-ta="வாரம் ஒருமுறை பயிரை சரிபார்க்கவும்">Check crop weekly for pests</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem;border:1px solid var(--g200)">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">🌿 Step 2: Cultural</div>
+              <div style="color:var(--c600)" data-en="Crop rotation, clean field" data-ta="பயிர் சுழற்சி, வயல் சுத்தம்">Crop rotation, clean field</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem;border:1px solid var(--g200)">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">🦋 Step 3: Biological</div>
+              <div style="color:var(--c600)" data-en="Use Trichogramma cards, Neem oil" data-ta="Trichogramma அட்டைகள், வேப்ப எண்ணெய் பயன்படுத்தவும்">Use Trichogramma cards, Neem oil</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.78rem;border:1px solid var(--g200)">
+              <div style="font-weight:700;color:var(--g700);margin-bottom:4px">💊 Step 4: Chemical</div>
+              <div style="color:var(--c600)" data-en="Only if ETL crossed, correct dosage" data-ta="ETL கடந்தால் மட்டுமே, சரியான அளவு">Only if ETL crossed, correct dosage</div>
+            </div>
+          </div>
+          <div class="ltip">⚠️ <span data-en="Never spray pesticide during flowering — kills bees and reduces yield by 30%." data-ta="பூக்கும் போது ஒருபோதும் பூச்சிமருந்து தெளிக்காதீர்கள் — தேனீக்களை கொல்கிறது, விளைச்சலை 30% குறைக்கிறது.">Never spray during flowering — kills bees and reduces yield by 30%.</span></div>
+        </div>
+      </div>
+
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" alt="Yellow Trap" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#fef9c3;color:#854d0e">🪤 <span data-en="Traps" data-ta="பொறிகள்">Traps</span></span>
+          <h3 class="ltitle" data-en="Pest Traps & Monitoring" data-ta="பூச்சி பொறிகள் மற்றும் கண்காணிப்பு">Pest Traps & Monitoring</h3>
+          <p class="ldesc" data-en="Yellow sticky traps catch whiteflies, aphids, thrips. Pheromone traps for bollworm, fruit fly. Light traps for night-flying moths. All low-cost and chemical-free." data-ta="மஞ்சள் ஒட்டும் பொறிகள் வெள்ளை ஈக்கள், அசுவினி, தெரிப்ஸ் பிடிக்கும். ஃபெரோமோன் பொறிகள் காய்ப்புழு, பழ ஈக்களுக்கு. விளக்கு பொறிகள் இரவு வண்டுகளுக்கு.">Yellow sticky traps for whitefly, aphids. Pheromone traps for bollworm. Light traps for night moths. All chemical-free.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Install 10 yellow sticky traps/acre at crop height" data-ta="பயிர் உயரத்தில் ஏக்கருக்கு 10 மஞ்சள் ஒட்டும் பொறிகள் நிறுவவும்">Install 10 yellow sticky traps/acre at crop height</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Count pests every 3–4 days" data-ta="ஒவ்வொரு 3-4 நாட்களும் பூச்சிகளை எண்ணவும்">Count pests every 3–4 days</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Spray only if count exceeds ETL (economic threshold)" data-ta="எண்ணிக்கை ETL (பொருளாதார வாய்ப்பு மட்டம்) மீறினால் மட்டுமே தெளிக்கவும்">Spray only if count exceeds ETL</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="Yellow trap cost: ₹5–8 each. One set lasts 4–6 weeks. Saves ₹500–800 in pesticide." data-ta="மஞ்சள் பொறி விலை: ஒவ்வொன்றும் ₹5-8. ஒரு செட் 4-6 வாரங்கள் நீடிக்கும். ₹500-800 பூச்சிமருந்து சேமிக்கலாம்.">Yellow trap: ₹5–8 each, lasts 4–6 weeks. Saves ₹500–800 in pesticide costs.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ MODERN FARMING ══════════════════════════════════ -->
+  <div class="lcat" data-cat="modern">
+    <h2 class="lsec-title">🚀 <span data-en="Modern Farming Technologies" data-ta="நவீன விவசாய தொழில்நுட்பங்கள்">Modern Farming Technologies</span></h2>
+    <div class="g3" style="margin-bottom:24px">
+      {% for item in content %}
+      <div class="card lcard-sm">
+        <div style="font-size:2.2rem;margin-bottom:10px;text-align:center">{{ item.emoji }}</div>
+        <div style="text-align:center;margin-bottom:8px">
+          <span class="lbadge" style="background:var(--g50);color:var(--g700)">{{ item.duration }} · {{ item.difficulty }}</span>
+        </div>
+        <h3 style="font-size:.92rem;font-weight:800;color:var(--g800);margin-bottom:6px;text-align:center">{{ item.title }}</h3>
+        <p style="font-size:.8rem;color:var(--c600);line-height:1.6;text-align:center">{{ item.description }}</p>
+        <button class="btn btnO btnFull btnSm" style="margin-top:12px" onclick="showToast('📺 Video content coming soon!')">
+          ▶️ <span data-en="Start Learning" data-ta="கற்கத் தொடங்கவும்">Start Learning</span>
+        </button>
+      </div>
+      {% empty %}
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--c500)">
+        <p>Run: python manage.py seed_data to add content</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ ORGANIC ══════════════════════════════════ -->
+  <div class="lcat" data-cat="organic">
+    <h2 class="lsec-title">🌿 <span data-en="Organic Farming Guide" data-ta="இயற்கை விவசாய வழிகாட்டி">Organic Farming Guide</span></h2>
+    <div class="g2" style="margin-bottom:24px">
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=600&q=80" alt="Organic Farm" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#d1fae5;color:#065f46">🌱 <span data-en="Zero Chemical" data-ta="ஜீரோ கெமிக்கல்">Zero Chemical</span></span>
+          <h3 class="ltitle" data-en="Natural Pest Control Methods" data-ta="இயற்கை பூச்சி கட்டுப்பாடு முறைகள்">Natural Pest Control Methods</h3>
+          <p class="ldesc" data-en="Control pests without chemicals using neem, cow urine, garlic spray and other natural methods. Reduces cost by 70% and produces premium-priced organic produce." data-ta="வேப்பம், மாட்டு சிறுநீர், பூண்டு ஸ்பிரே மற்றும் பிற இயற்கை முறைகளைப் பயன்படுத்தி வேதிப்பொருள் இல்லாமல் பூச்சிகளை கட்டுப்படுத்தவும்.">Control pests without chemicals using neem, cow urine, garlic spray. Reduces cost by 70%.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin:12px 0">
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.8rem;border:1px solid var(--g200)">
+              <div style="font-weight:700;margin-bottom:3px">🌿 <span data-en="Neem Spray" data-ta="வேப்ப ஸ்பிரே">Neem Spray</span></div>
+              <div style="color:var(--c600)" data-en="5ml neem oil + 1L water + soap. Spray weekly for sucking pests." data-ta="5மிலி வேப்ப எண்ணெய் + 1லி தண்ணீர் + சோப்பு. ஒட்டும் பூச்சிகளுக்கு வாரம் ஒருமுறை தெளிக்கவும்.">5ml neem oil + 1L water + soap. Spray weekly for sucking pests.</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.8rem;border:1px solid var(--g200)">
+              <div style="font-weight:700;margin-bottom:3px">🧄 <span data-en="Garlic-Chilli Spray" data-ta="பூண்டு-மிளகாய் ஸ்பிரே">Garlic-Chilli Spray</span></div>
+              <div style="color:var(--c600)" data-en="100g garlic + 10 chillies + 1L water. Repels aphids, caterpillars." data-ta="100 கிராம் பூண்டு + 10 மிளகாய் + 1 லிட்டர் தண்ணீர். அசுவினி, புழுக்களை விரட்டும்.">100g garlic + 10 chillies + 1L water. Repels aphids, caterpillars.</div>
+            </div>
+            <div style="background:var(--g50);border-radius:8px;padding:10px;font-size:.8rem;border:1px solid var(--g200)">
+              <div style="font-weight:700;margin-bottom:3px">🐄 <span data-en="Jeevamrutham" data-ta="ஜீவாமிர்தம்">Jeevamrutham</span></div>
+              <div style="color:var(--c600)" data-en="10kg cow dung + 10L cow urine + 2kg jaggery + 2kg flour + soil. Ferment 48 hrs. Dilute 10× and spray." data-ta="10கிலோ மாட்டு சாணம் + 10லி மாட்டு சிறுநீர் + 2கிலோ வெல்லம் + 2கிலோ மாவு + மண். 48 மணி நேரம் புளிக்க விடவும்.">10kg cow dung + 10L cow urine + 2kg jaggery. Ferment 48 hrs. Dilute 10× and spray.</div>
+            </div>
+          </div>
+          <div class="ltip">💡 <span data-en="Organic certified produce sells at 30–50% premium. Apply for NPOP certification." data-ta="இயற்கை சான்றிதழ் பெற்ற விளைபொருட்கள் 30-50% அதிக விலையில் விற்கப்படுகின்றன. NPOP சான்றிதழுக்கு விண்ணப்பிக்கவும்.">Organic certified produce sells at 30–50% premium. Apply for NPOP certification.</span></div>
+        </div>
+      </div>
+
+      <div class="card lcard">
+        <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80" alt="Vermicompost" class="limg"/>
+        <div class="cb">
+          <span class="lbadge" style="background:#d1fae5;color:#065f46">🪱 <span data-en="Vermicompost" data-ta="மண்புழு உரம்">Vermicompost</span></span>
+          <h3 class="ltitle" data-en="Vermicompost Production" data-ta="மண்புழு உரம் தயாரிப்பு">Vermicompost Production</h3>
+          <p class="ldesc" data-en="Earthworms convert organic waste into high-quality compost in 45–60 days. Vermicompost is 5× richer in NPK than ordinary compost. Sell excess at ₹8–15/kg." data-ta="மண்புழுக்கள் 45-60 நாட்களில் கரிம கழிவுகளை உயர்தர உரமாக மாற்றுகின்றன. மண்புழு உரம் சாதாரண உரத்தை விட NPK-யில் 5 மடங்கு செழுமையானது.">Earthworms convert waste to compost in 45–60 days. 5× richer than ordinary compost. Sell excess at ₹8–15/kg.</p>
+          <div class="lsteps">
+            <div class="lstep"><span class="lstep-n">1</span><span data-en="Build cement tank 6×4×2 ft or use wooden box" data-ta="6×4×2 அடி சிமென்ட் தொட்டி கட்டுங்கள் அல்லது மரப்பெட்டி பயன்படுத்துங்கள்">Build cement tank 6×4×2 ft or use wooden box</span></div>
+            <div class="lstep"><span class="lstep-n">2</span><span data-en="Add 30% dry material as base (straw, dried leaves)" data-ta="30% உலர் பொருட்களை அடித்தளமாக சேர்க்கவும் (வைக்கோல், உலர் இலைகள்)">Add 30% dry material as base (straw, dried leaves)</span></div>
+            <div class="lstep"><span class="lstep-n">3</span><span data-en="Add pre-decomposed cow dung and organic waste" data-ta="முன்-சிதைந்த மாட்டு சாணம் மற்றும் கரிம கழிவுகளை சேர்க்கவும்">Add pre-decomposed cow dung and organic waste</span></div>
+            <div class="lstep"><span class="lstep-n">4</span><span data-en="Add Eisenia fetida worms (1kg per 100kg waste)" data-ta="Eisenia fetida மண்புழுக்கள் சேர்க்கவும் (100 கிலோ கழிவுக்கு 1 கிலோ)">Add Eisenia fetida worms (1kg per 100kg waste)</span></div>
+            <div class="lstep"><span class="lstep-n">5</span><span data-en="Maintain 60% moisture, harvest in 45–60 days" data-ta="60% ஈரப்பதம் பராமரிக்கவும், 45-60 நாட்களில் அறுவடை செய்யவும்">Maintain 60% moisture, harvest in 45–60 days</span></div>
+          </div>
+          <div class="ltip">💡 <span data-en="1 tonne vermicompost per year can save ₹15,000–20,000 in fertilizer cost." data-ta="ஆண்டுக்கு 1 டன் மண்புழு உரம் ₹15,000-20,000 உர செலவை சேமிக்கலாம்.">1 tonne vermicompost/year saves ₹15,000–20,000 in fertilizer cost.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Reference Card -->
+  <div style="background:linear-gradient(135deg,var(--g900),var(--g700));border-radius:var(--r2);padding:24px;color:#fff;margin-top:8px">
+    <h3 style="margin-bottom:16px;font-size:1rem" data-en="📞 Need Expert Help?" data-ta="📞 நிபுணர் உதவி தேவையா?">📞 Need Expert Help?</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+      <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:14px">
+        <div style="font-weight:700;margin-bottom:4px">🌾 Kisan Call Centre</div>
+        <div style="font-size:1.1rem;font-weight:900">1800-180-1551</div>
+        <div style="font-size:.74rem;opacity:.7" data-en="Free · All days 6AM–10PM" data-ta="இலவசம் · தினமும் காலை 6 - இரவு 10">Free · All days 6AM–10PM</div>
+      </div>
+      <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:14px">
+        <div style="font-weight:700;margin-bottom:4px">🧪 TNAU Helpline</div>
+        <div style="font-size:1.1rem;font-weight:900">0422-661-1200</div>
+        <div style="font-size:.74rem;opacity:.7" data-en="Soil, pest, variety advice" data-ta="மண், பூச்சி, ரக ஆலோசனை">Soil, pest, variety advice</div>
+      </div>
+      <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:14px">
+        <div style="font-weight:700;margin-bottom:4px">📱 mKisan App</div>
+        <div style="font-size:1rem;font-weight:700">Google Play</div>
+        <div style="font-size:.74rem;opacity:.7" data-en="Govt advisory, weather, prices" data-ta="அரசு ஆலோசனை, வானிலை, விலைகள்">Govt advisory, weather, prices</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 </section>
+
+<style>
+.lsec-title{font-size:1.15rem;font-weight:800;color:var(--g800);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--g200)}
+.limg{width:100%;height:190px;object-fit:cover}
+.lbadge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;margin-bottom:8px}
+.ltitle{font-size:.95rem;font-weight:800;color:var(--g900);margin-bottom:6px}
+.ldesc{font-size:.82rem;color:var(--c600);line-height:1.65;margin-bottom:10px}
+.lsteps{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.lstep{display:flex;align-items:flex-start;gap:8px;font-size:.8rem;color:var(--c700)}
+.lstep-n{min-width:20px;height:20px;background:var(--g700);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;margin-top:1px}
+.ltip{background:var(--g50);border-left:3px solid var(--g500);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.78rem;color:var(--g700);line-height:1.55}
+.lcard{overflow:hidden;padding:0}
+.lcard .cb{padding:16px}
+.lcard-sm{padding:18px;text-align:center}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showCat(cat, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.lcat').forEach(c=>{
+    c.style.display = (cat==='all' || c.dataset.cat===cat) ? '' : 'none';
+  });
+}
+</script>
 {% endblock %}
