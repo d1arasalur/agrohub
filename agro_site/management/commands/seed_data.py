@@ -1,11 +1,15 @@
 from django.core.management.base import BaseCommand
-from agro_site.models import *
+from django.contrib.auth.hashers import make_password
+from agro_site.models import (User, Crop, CropVariety, HarvestingGuide,
+    CropDisease, Fertilizer, Pesticide, MandiPrice, LoanScheme, LearnContent)
+import datetime
 
 class Command(BaseCommand):
-    help = 'Seed all agricultural data with Tamil+English'
+    help = 'Seed database with 35+ crops and full Tamil Nadu agricultural data'
 
     def handle(self, *args, **options):
-        self.stdout.write('Seeding data...')
+        self.stdout.write('🌱 Seeding AgroHub database...')
+        self._users()
         self._crops()
         self._fertilizers()
         self._pesticides()
@@ -14,420 +18,425 @@ class Command(BaseCommand):
         self._learn()
         self.stdout.write(self.style.SUCCESS('✅ All data seeded successfully!'))
 
+    def _users(self):
+        if not User.objects.filter(username='admin').exists():
+            User.objects.create(username='admin', email='admin@agrohub.in',
+                password=make_password('admin123'), role='admin',
+                is_staff=True, is_superuser=True)
+        if not User.objects.filter(username='farmer1').exists():
+            User.objects.create(username='farmer1', email='farmer@agrohub.in',
+                password=make_password('farmer123'), role='farmer',
+                district='Trichy', village='Srirangam', land_area=2.5)
+
     def _crops(self):
         Crop.objects.all().delete()
         crops_data = [
-            {
-                'name':'Paddy','name_tamil':'நெல்','emoji':'🌾','category':'grain','season':'kharif',
-                'duration_days':'105–140 நாட்கள்','water_req':'1200–2000 மி.மீ','temp_range':'20–35°C',
-                'soil_type':'களிமண் கலந்த மண் — நீர் தேங்கும் தன்மை அவசியம்','ph_range':'5.5 – 7.0',
-                'yield_per_ha':'4–6 டன்/ஹெக்டேர் (நீர்ப்பாசனம்)','market_price':'₹1850–2100/குவிண்டால் (MSP ₹2183)',
-                'description':'Paddy is Tamil Nadu primary staple crop. Grown in Kuruvai (Jun–Sep) and Samba (Oct–Feb) seasons.',
-                'description_tamil':'நெல் தமிழ்நாட்டின் முக்கிய உணவு தானியம். குருவை (ஜூன்–செப்.) மற்றும் சம்பா (அக்.–பிப்.) என இரு பருவங்களில் பயிரிடப்படுகிறது.',
-                'suitable_districts':'Thanjavur, Tiruvarur, Nagapattinam, Trichy, Pudukkottai',
-                'varieties':[
-                    {'name':'ADT 43','duration':'110–115 நாட்கள்','yield_info':'6.5 டன்/ஹெ','specialty':'அதிக மகசூல், கதிர் கருகல் நோய் எதிர்ப்பு, நீர்ப்பாசன நிலைக்கு ஏற்றது','released_by':'TNAU, Aduthurai'},
-                    {'name':'CO 51','duration':'115–120 நாட்கள்','yield_info':'5.8 டன்/ஹெ','specialty':'நேர்த்தியான தானியம், சுவையானது, வறட்சி தாங்கும்','released_by':'TNAU Coimbatore'},
-                    {'name':'BPT 5204 (Samba Mahsuri)','duration':'140–145 நாட்கள்','yield_info':'5.5 டன்/ஹெ','specialty':'நீண்ட மெல்லிய தானியம், சுகந்த வாசம், சந்தையில் அதிக விலை','released_by':'ANGRAU'},
-                    {'name':'CR 1009 (Swarna)','duration':'135–140 நாட்கள்','yield_info':'4.8 டன்/ஹெ','specialty':'வெள்ளம் தாங்கும், சிறந்த சமையல் தரம்','released_by':'CRRI Cuttack'},
-                ],
-                'harvest':{
-                    'maturity_signs':'தானியங்கள் தங்க மஞ்சள் நிறம் ஆகும். 80% கதிர்கள் பழுக்கும். இலைகள் காய்ந்திருக்கும். தானியத்தில் ஈரப்பதம் 20–25%.',
-                    'harvest_method':'காலை 6–10 மணிக்கு அறுவடை செய்யவும். கம்பைன் ஹார்வெஸ்டர் அல்லது கையால் அரிவாள் கொண்டு அறுக்கவும். உடனே கதிர் அடிக்கவும்.',
-                    'post_harvest':'களையை 14% ஈரப்பதம் வரை காயவிடவும். சேமிப்பிற்கு 12% ஈரப்பதம் வேண்டும். தாமதம் பூஞ்சை வளர்ச்சிக்கு வழிவகுக்கும்.',
-                    'storage_tips':'சுத்தமான, உலர்ந்த சணல் பைகளில் அல்லது உலோக தொட்டிகளில் சேமிக்கவும். வேப்பிலை அல்லது phosphine மாத்திரை பயன்படுத்தவும். 15 நாட்களுக்கு ஒரு முறை சோதிக்கவும்.',
-                    'best_time':'காலை வேளை (6–10 மணி) — வெப்பம் குறைவாக இருக்கும்','shelf_life':'சரியான சேமிப்பில் 6–12 மாதங்கள்'
-                },
-                'diseases':[
-                    {'name':'Paddy Blast','name_tamil':'கதிர் கருகல் நோய்','severity':'critical',
-                     'symptoms':'இலைகளில் வைர வடிவ சாம்பல் புள்ளிகள் — பழுப்பு விளிம்புடன். கழுத்தில் தாக்கினால் கதிர் முறியும். கடுமையான தொற்றில் முழு தூர் காய்ந்துவிடும்.',
-                     'treatment':'Tricyclazole 75WP @ 0.6 கிரா/லிட்டர் அல்லது Carbendazim 50WP @ 1 கிரா/லிட்டர் தெளிக்கவும். Boot stage முதல் 10 நாட்கள் இடைவெளியில் 2 தெளிப்பு.',
-                     'prevention':'எதிர்ப்பு இரகங்கள் (ADT 43, CO 51) பயன்படுத்தவும். அதிக நைட்ரஜன் தவிர்க்கவும். பாதிக்கப்பட்ட வயல்களில் இருந்து நீர் வேண்டாம். பயிர் எச்சங்கள் எரிக்கவும்.'},
-                    {'name':'Brown Plant Hopper','name_tamil':'பழுப்பு நெல் தத்துப்பூச்சி','severity':'high',
-                     'symptoms':'வயலில் வட்ட வடிவ மஞ்சள் மற்றும் காய்ந்த திட்டுகள் (Hopper Burn). தூர்களின் அடியில் நீர் மட்டத்தில் பூச்சிகள் காணப்படும்.',
-                     'treatment':'Imidacloprid 17.8SL @ 0.25 மி.லி/லிட்டர் அல்லது Buprofezin 25SC @ 1.6 மி.லி/லிட்டர். தெளிப்பதற்கு முன் வயலில் தண்ணீரை வடிக்கவும்.',
-                     'prevention':'அடர்த்தியான நடவு தவிர்க்கவும். அதிக நைட்ரஜன் வேண்டாம். சிலந்தி, வண்டுகள் போன்ற இயற்கை எதிரிகளை பாதுகாக்கவும். ஒளி பொறி வைக்கவும்.'},
-                ],
-            },
-            {
-                'name':'Tomato','name_tamil':'தக்காளி','emoji':'🍅','category':'vegetable','season':'rabi',
-                'duration_days':'70–90 நாட்கள் (நடவிலிருந்து அறுவடை வரை)','water_req':'400–600 மி.மீ',
-                'temp_range':'20–27°C சிறந்தது; பூக்கும் போது >35°C தவிர்க்கவும்',
-                'soil_type':'நன்கு வடிகால் வசதியுள்ள மணல் கலந்த களிமண் — கரிமப் பொருள் அதிகம்',
-                'ph_range':'6.0 – 7.0','yield_per_ha':'25–40 டன்/ஹெக்டேர் (hybrid 60 டன் வரை)',
-                'market_price':'₹15–80/கிலோ (சராசரி ₹30–45/கிலோ)',
-                'description':'Tomato is Tamil Nadu most important vegetable crop grown year-round in Krishnagiri, Dharmapuri, Dindigul districts.',
-                'description_tamil':'தக்காளி தமிழ்நாட்டின் மிக முக்கியமான காய்கறி பயிர். கிருஷ்ணகிரி, தர்மபுரி, திண்டுக்கல் மாவட்டங்களில் ஆண்டு முழுவதும் சாகுபடி செய்யப்படுகிறது.',
-                'suitable_districts':'Krishnagiri, Dharmapuri, Dindigul, Salem, Coimbatore, Namakkal',
-                'varieties':[
-                    {'name':'PKM 1','duration':'75–80 நாட்கள்','yield_info':'27 டன்/ஹெ','specialty':'உறுதியான காய்கள் — போக்குவரத்திற்கு ஏற்றது, வெப்பம் தாங்கும்','released_by':'TNAU Periyakulam'},
-                    {'name':'CO 3','duration':'80–85 நாட்கள்','yield_info':'30 டன்/ஹெ','specialty':'TYLCV வைரஸ் எதிர்ப்பு, நீண்ட கால பதப்படுத்தல்','released_by':'TNAU'},
-                    {'name':'Arka Rakshak (Hybrid)','duration':'70–75 நாட்கள்','yield_info':'55–60 டன்/ஹெ','specialty':'மூன்று நோய் எதிர்ப்பு, பெரிய காய்கள் 80–90 கிரா','released_by':'IIHR Bangalore'},
-                ],
-                'harvest':{
-                    'maturity_signs':'காய்கள் பச்சையிலிருந்து மஞ்சள்-பச்சை (தூரத்திற்கு) அல்லது முழு சிவப்பு (உள்ளூர் சந்தை) நிறமாகும். காம்பு அருகே மென்மையாகும்.',
-                    'harvest_method':'ஒவ்வொரு காயாக கையால் பறிக்கவும். தூரத்திற்கு mature green நிலையில் பறிக்கவும். 3–4 நாட்களுக்கு ஒரு முறை பறிக்கவும்.',
-                    'post_harvest':'அளவு மற்றும் நிறம் கொண்டு தரம் பிரிக்கவும். ஒற்றை அடுக்கில் மென்மையான பொருட்களால் பாதுகாத்து பெட்டியில் வைக்கவும்.',
-                    'storage_tips':'12–13°C-ல் சேமிக்கவும் (mature green). 8°C-க்கு கீழே வைக்காதீர்கள் — Chilling injury ஏற்படும்.',
-                    'best_time':'காலை வேளையில் பறிக்கவும். மழை நேரத்தில் அறுவடை தவிர்க்கவும்.','shelf_life':'அறை வெப்பநிலையில் 7–14 நாட்கள்; குளிர் சேமிப்பில் 3 வாரங்கள் வரை'
-                },
-                'diseases':[
-                    {'name':'Early Blight','name_tamil':'ஆரம்ப இலை கருகல்','severity':'medium',
-                     'symptoms':'பழைய இலைகளில் இலக்கு வடிவ (Target Board) கறுப்பு-பழுப்பு புள்ளிகள் — மஞ்சள் வட்டத்துடன். கீழ் இலைகளில் தொடங்கி மேலே பரவும்.',
-                     'treatment':'Mancozeb 75WP @ 2.5 கிரா/லிட்டர் அல்லது Chlorothalonil 75WP @ 2 கிரா/லிட்டர். 7–10 நாட்கள் இடைவெளியில் தெளிக்கவும்.',
-                     'prevention':'Solanaceous அல்லாத பயிர்களுடன் பயிர் மாற்றம். பாதிக்கப்பட்ட இலைகளை அகற்றவும். மேல் நீர்ப்பாசனம் தவிர்க்கவும்.'},
-                    {'name':'Leaf Curl Virus (TYLCV)','name_tamil':'இலை சுருள் நோய்','severity':'high',
-                     'symptoms':'இலைகள் மேல்நோக்கி சுருளும். தாவரம் குட்டையாகும். இலை விளிம்பு மஞ்சளாகும். காய்கள் குறையும். வெள்ளை ஈ (Whitefly) மூலம் பரவும்.',
-                     'treatment':'வைரஸுக்கு நேரடி மருந்து இல்லை. வெள்ளை ஈ கட்டுப்பாடு: Imidacloprid 17.8SL @ 0.3 மி.லி/லி. பாதிக்கப்பட்ட தாவரங்களை அகற்றி அழிக்கவும்.',
-                     'prevention':'எதிர்ப்பு இரகங்கள் பயன்படுத்தவும் (CO 3, Arka Rakshak). மஞ்சள் ஒட்டும் பொறி வைக்கவும். வேப்ப எண்ணெய் 3% தெளிக்கவும்.'},
-                ],
-            },
-            {
-                'name':'Onion','name_tamil':'வெங்காயம்','emoji':'🧅','category':'vegetable','season':'rabi',
-                'duration_days':'110–130 நாட்கள்','water_req':'350–550 மி.மீ',
-                'temp_range':'15–25°C; கிழங்கு உருவாக 20–25°C தேவை',
-                'soil_type':'நன்கு வடிகால் வசதியுள்ள மணல் கலந்த களிமண்; நீர் தேங்கல் கூடாது',
-                'ph_range':'6.0 – 7.5','yield_per_ha':'20–30 டன்/ஹெக்டேர்',
-                'market_price':'₹8–45/கிலோ (சராசரி ₹15–25/கிலோ)',
-                'description':'Onion is a major commercial crop. Tamil Nadu is the second largest onion producing state in India.',
-                'description_tamil':'வெங்காயம் தமிழ்நாட்டின் முக்கிய வணிக பயிர். தமிழ்நாடு இந்தியாவில் இரண்டாவது பெரிய வெங்காயம் உற்பத்தி மாநிலம்.',
-                'suitable_districts':'Erode, Tiruppur, Dindigul, Coimbatore, Salem, Namakkal',
-                'varieties':[
-                    {'name':'CO 4','duration':'110–115 நாட்கள்','yield_info':'28 டன்/ஹெ','specialty':'அடர் சிவப்பு நிறம், காரமான சுவை, நீண்ட சேமிப்பு தன்மை','released_by':'TNAU'},
-                    {'name':'Arka Kalyan','duration':'120–130 நாட்கள்','yield_info':'30 டன்/ஹெ','specialty':'உருண்டை வடிவம், லேசான காரம், ஏற்றுமதிக்கு ஏற்றது','released_by':'IIHR'},
-                ],
-                'harvest':{
-                    'maturity_signs':'50–70% நுனி இலைகள் இயற்கையாக வளைந்து விழும். வெளி 2–3 இலைகள் காய்ந்திருக்கும். கிழங்கு முழு அளவு அடையும்.',
-                    'harvest_method':'முள்கோல் அல்லது இயந்திரத்தால் கிழங்குகளை தோண்டவும். நுனியை இழுத்து பிடுங்காதீர்கள் — கழுத்து முறியும். 7–10 நாட்கள் வயலில் காயவிடவும்.',
-                    'post_harvest':'நிழலில் 2–3 வாரங்கள் காயவிடவும். தோல் கடினப்படும். அதன்பின் நுனி மற்றும் வேர் வெட்டவும்.',
-                    'storage_tips':'நன்கு காற்றோட்டமுள்ள ZECC அல்லது குளிர் சேமிப்பில் 0–2°C, 65–70% ஈரப்பதத்தில் சேமிக்கவும்.',
-                    'best_time':'வறண்ட வானிலையில் அறுவடை செய்யவும். மழையில் அறுவடை தவிர்க்கவும்.','shelf_life':'அறை வெப்பநிலையில் 2–3 மாதங்கள்; குளிர் சேமிப்பில் 5–6 மாதங்கள்'
-                },
-                'diseases':[
-                    {'name':'Purple Blotch','name_tamil':'ஊதா புள்ளி நோய்','severity':'high',
-                     'symptoms':'இலைகள் மற்றும் விதை தண்டுகளில் ஊதா மையத்துடன் சிறிய வெள்ளை புள்ளிகள். மஞ்சள் வட்டத்துடன் பெரிதாகும். கடுமையான தொற்றில் இலை முழுவதும் காய்ந்துவிடும்.',
-                     'treatment':'Mancozeb 75WP @ 2.5 கிரா/லிட்டர் அல்லது Iprodione 50WP @ 1 கிரா/லிட்டர். நடவிலிருந்து 45 நாட்களில் தொடங்கி 10 நாட்கள் இடைவெளியில் 3–4 தெளிப்பு.',
-                     'prevention':'பயிர் மாற்றம். அடர்த்தியான நடவு தவிர்க்கவும். பாதிக்கப்பட்ட பயிர் எச்சங்களை அகற்றவும். Sprinkler நீர்ப்பாசனம் தவிர்க்கவும்.'},
-                ],
-            },
-            {
-                'name':'Sugarcane','name_tamil':'கரும்பு','emoji':'🎋','category':'cash','season':'annual',
-                'duration_days':'10–14 மாதங்கள்','water_req':'1500–2500 மி.மீ (தொடர்ந்த நீர்ப்பாசனம் தேவை)',
-                'temp_range':'24–38°C; சர்க்கரை சேர்க்கைக்கு வெதுவெதுப்பான பகல் + குளிரான இரவு',
-                'soil_type':'ஆழமான, நன்கு வடிகால் வசதியுள்ள கோட்டை மண்; pH 6.5–7.5',
-                'ph_range':'6.5 – 8.0','yield_per_ha':'80–120 டன்/ஹெக்டேர்',
-                'market_price':'₹280–320/குவிண்டால் (State Advised Price)',
-                'description':'Sugarcane is the most important cash crop of Tamil Nadu. Coimbatore, Erode are major growing districts.',
-                'description_tamil':'கரும்பு தமிழ்நாட்டின் மிக முக்கியமான பண பயிர். கோயம்புத்தூர், ஈரோடு மற்றும் திருப்பூர் முக்கிய சாகுபடி மாவட்டங்கள்.',
-                'suitable_districts':'Coimbatore, Erode, Tiruppur, Salem, Vellore, Krishnagiri',
-                'varieties':[
-                    {'name':'Co 86032','duration':'12 மாதங்கள்','yield_info':'100–110 டன்/ஹெ','specialty':'அதிக சர்க்கரை (CCS 12–13%), நேர் வளர்ச்சி, பரவலான பயன்பாடு','released_by':'SBI Coimbatore'},
-                    {'name':'Co 0238','duration':'11–12 மாதங்கள்','yield_info':'95–105 டன்/ஹெ','specialty':'முன்கூட்டியே பழுக்கும், அதிக சுக்ரோஸ், Red Rot எதிர்ப்பு','released_by':'SBI Coimbatore'},
-                ],
-                'harvest':{
-                    'maturity_signs':'சாறின் Brix% 18–20° அடையும். கரும்பு மஞ்சள்-பச்சை நிறமாகும். கணுக்களில் கண்கள் தெளிவாக தெரியும்.',
-                    'harvest_method':'கூர்மையான கத்தியால் தரை அளவில் வெட்டவும். இயந்திர ஹார்வெஸ்டர் பயன்படுத்தலாம். குளை (Trash) நீக்கிவிட்டு வெட்டவும்.',
-                    'post_harvest':'அறுவடைக்கு 24 மணி நேரத்திற்குள் சர்க்கரை ஆலையில் கொடுக்கவும். தாமதம் சர்க்கரை தரத்தை குறைக்கும்.',
-                    'storage_tips':'நிழலில் வைக்கவும். வெயிலில் அடுக்காதீர்கள். அதே நாள் ஆலையில் கொடுக்கவும்.',
-                    'best_time':'அக்டோபர்–மார்ச் — சர்க்கரை அளவு அதிகமாக இருக்கும். காலை வேளை சிறந்தது.','shelf_life':'வெட்டிய 24–48 மணி நேரத்திற்குள் பதப்படுத்தவும்'
-                },
-                'diseases':[
-                    {'name':'Red Rot','name_tamil':'சிவப்பு அழுகல் நோய்','severity':'critical',
-                     'symptoms':'கரும்பின் உள்ளே சிவத்தல். வெள்ளை-சிவப்பு திட்டுகள் மாறி மாறி காணப்படும். நொதிக்கும் வாசனை. மேல் இலைகள் வாடி காய்தல்.',
-                     'treatment':'தொற்று ஏற்பட்ட பின் மருந்து பயனற்றது. பாதிக்கப்பட்ட தாவரங்களை உடனே அகற்றவும். விதை சோதனை: Carbendazim 0.1% + Mancozeb 0.25% கரைசலில் 30 நிமிடம் நனைக்கவும்.',
-                     'prevention':'நோயற்ற விதை பயன்படுத்தவும். எதிர்ப்பு இரகங்கள் (CoC 671) தேர்வு செய்யவும். நீர் தேங்கல் தவிர்க்கவும். பயிர் மாற்றம் செய்யவும்.'},
-                ],
-            },
-            {
-                'name':'Banana','name_tamil':'வாழை','emoji':'🍌','category':'fruit','season':'annual',
-                'duration_days':'11–14 மாதங்கள்','water_req':'1200–2200 மி.மீ (சொட்டு நீர்ப்பாசனம் சிறந்தது)',
-                'temp_range':'26–30°C சிறந்தது; 12°C-க்கு கீழே Chilling Injury ஏற்படும்',
-                'soil_type':'ஆழமான, நன்கு வடிகால் வசதியுள்ள வளமான கோட்டை மண் — கரிமப் பொருள் அதிகம்',
-                'ph_range':'6.0 – 7.5','yield_per_ha':'30–60 டன்/ஹெக்டேர்',
-                'market_price':'₹12–35/கிலோ',
-                'description':'Tamil Nadu ranks first in banana production in India. Trichy, Thanjavur, Erode are major growing regions.',
-                'description_tamil':'தமிழ்நாடு இந்தியாவில் வாழை உற்பத்தியில் முதல் இடம் வகிக்கிறது. திருச்சி, தஞ்சாவூர், ஈரோடு முக்கிய உற்பத்தி பகுதிகள்.',
-                'suitable_districts':'Trichy, Thanjavur, Erode, Dindigul, Coimbatore, Theni',
-                'varieties':[
-                    {'name':'Rasthali (Silk)','duration':'13–14 மாதங்கள்','yield_info':'20–25 டன்/ஹெ','specialty':'சிறந்த சுவை, இனிப்பு-புளிப்பு கலந்த சுவை, அதிக சந்தை மதிப்பு','released_by':'பாரம்பரிய இரகம்'},
-                    {'name':'Grand Naine (G9)','duration':'11–12 மாதங்கள்','yield_info':'55–60 டன்/ஹெ','specialty':'ஏற்றுமதி தரம், சீரான கொத்து, நீண்ட கால பதப்படுத்தல்','released_by':'Tissue culture'},
-                    {'name':'Poovan (Mysore)','duration':'13–15 மாதங்கள்','yield_info':'18–22 டன்/ஹெ','specialty':'நோய் எதிர்ப்பு, சிறந்த சுவை, உள்ளூர் சந்தையில் பிரபலம்','released_by':'பாரம்பரிய இரகம்'},
-                    {'name':'Red Banana','duration':'14–16 மாதங்கள்','yield_info':'15–18 டன்/ஹெ','specialty':'உயர் விலை, தனித்துவமான சுவை, Beta-carotene அதிகம்','released_by':'பாரம்பரிய இரகம்'},
-                ],
-                'harvest':{
-                    'maturity_signs':'கனிகளின் கோணல் தன்மை குறைந்து உருண்டையாகும். அடர் பச்சையிலிருந்து இளம் பச்சையாகும். கொத்து வெளிப்பட்ட 75–80 நாட்களில்.',
-                    'harvest_method':'கூர்மையான கத்தியால் 30–40 செ.மீ தண்டுடன் வெட்டவும். கொத்தை தூக்கி பிடிக்க ஒருவர் — வெட்ட ஒருவர். சேதம் ஏற்படாமல் கவனமாக கையாளவும்.',
-                    'post_harvest':'Ethylene @ 100 ppm கொண்டு 18°C-ல் 24–48 மணி நேரம் பழுக்க வைக்கவும். அளவு மற்றும் எண்ணிக்கை கொண்டு தரம் பிரிக்கவும்.',
-                    'storage_tips':'பச்சை வாழை 13–14°C-ல் சேமிக்கவும். பழுத்த வாழை 12–13°C-ல் சேமிக்கவும். 12°C-க்கு கீழே வைக்காதீர்கள் — Chilling Injury.',
-                    'best_time':'காலை வேளையில் பறிக்கவும். வெயில் நேரத்தில் அறுவடை தவிர்க்கவும்.','shelf_life':'பச்சை: 13°C-ல் 3–4 வாரங்கள்; பழுத்தது: அறை வெப்பநிலையில் 5–7 நாட்கள்'
-                },
-                'diseases':[
-                    {'name':'Panama Wilt','name_tamil':'பனாமா வாட்ட நோய்','severity':'critical',
-                     'symptoms':'வெளி இலைகளில் மஞ்சள் நிறம் தொடங்கி உள்ளே பரவும். இலைகள் வாடி கீழே தொங்கும். போலி தண்டின் உள்ளே பழுப்பு-ஊதா நிறம். அறுவடைக்கு முன்பே தாவரம் இறக்கும்.',
-                     'treatment':'தொற்று ஏற்பட்ட பின் குணப்படுத்த முடியாது. பாதிக்கப்பட்ட தாவரங்களை கிழங்குடன் அகற்றி அழிக்கவும். Carbendazim 0.2% கொண்டு மண்ணை நனைக்கவும்.',
-                     'prevention':'எதிர்ப்பு இரகங்கள் (G9, Poovan) பயன்படுத்தவும். நோயற்ற Tissue Culture நாற்றுகள் பயன்படுத்தவும். பாதிக்கப்பட்ட வயல் மண்ணை வேறு இடம் கொண்டு போகாதீர்கள்.'},
-                ],
-            },
-            {
-                'name':'Groundnut','name_tamil':'நிலக்கடலை','emoji':'🥜','category':'cash','season':'kharif',
-                'duration_days':'90–130 நாட்கள்','water_req':'500–700 மி.மீ',
-                'temp_range':'25–30°C; பருவம் முடியும் போது வெப்பமான உலர்ந்த வானிலை தேவை',
-                'soil_type':'நன்கு வடிகால் வசதியுள்ள மணல் கலந்த களிமண் — கால்சியம் தேவை',
-                'ph_range':'6.0 – 7.0','yield_per_ha':'1.5–3 டன்/ஹெக்டேர் (காய் மகசூல்)',
-                'market_price':'₹55–80/கிலோ',
-                'description':'Groundnut is a major oilseed and cash crop. Vellore, Tiruvannamalai, Salem are major producing districts.',
-                'description_tamil':'நிலக்கடலை தமிழ்நாட்டின் முக்கிய எண்ணெய் விதை பயிர். வேலூர், திருவண்ணாமலை, சேலம் மாவட்டங்கள் முக்கிய உற்பத்தி பகுதிகள்.',
-                'suitable_districts':'Vellore, Tiruvannamalai, Salem, Dharmapuri, Krishnagiri',
-                'varieties':[
-                    {'name':'TMV 7','duration':'100–105 நாட்கள்','yield_info':'1800–2000 கிரா/ஹெ','specialty':'பெரிய விதை, 48% எண்ணெய் அளவு, Tikka எதிர்ப்பு','released_by':'TNAU'},
-                    {'name':'VRI 2','duration':'95–100 நாட்கள்','yield_info':'1900–2100 கிரா/ஹெ','specialty':'குறுகிய காலம், Bud Necrosis எதிர்ப்பு, கோடை பருவத்திற்கு ஏற்றது','released_by':'TNAU'},
-                ],
-                'harvest':{
-                    'maturity_signs':'காய்களின் உட்சுவர் கருமையாகும் (மாதிரி காய்களை உரித்து சோதிக்கவும்). 70–75% காய்கள் பழுக்கும். இலைகள் மஞ்சளாகும்.',
-                    'harvest_method':'கையால் அல்லது இயந்திரத்தால் தோண்டி எடுக்கவும். மண்ணை உதிர்க்கவும். 2–3 நாட்கள் வயலில் காயவிடவும். பிறகு அடிக்கவும்.',
-                    'post_harvest':'காய்களை 10% ஈரப்பதம் வரை காயவிடவும். சேமிப்பிற்கு 8% ஈரப்பதம் வேண்டும். கைகொட்டை அடிப்பான் அல்லது இயந்திரத்தால் உரிக்கவும்.',
-                    'storage_tips':'சணல் பைகளில் அல்லது தொட்டிகளில் குளிரான, உலர்ந்த இடத்தில் சேமிக்கவும். 8–9% ஈரப்பதம் பராமரிக்கவும். ஈரமான காய்களை சேமிக்காதீர்கள் — Aflatoxin ஏற்படும்.',
-                    'best_time':'வறண்ட வானிலையில் அறுவடை செய்யவும்.','shelf_life':'8% ஈரப்பதத்தில் 6–8 மாதங்கள்'
-                },
-                'diseases':[
-                    {'name':'Tikka Leaf Spot','name_tamil':'டிக்கா இலை புள்ளி நோய்','severity':'high',
-                     'symptoms':'இலைகளில் சிறிய வட்ட பழுப்பு புள்ளிகள். Early Blight: மஞ்சள் வட்டத்துடன். Late Blight: மஞ்சள் வட்டமில்லாத அடர் பழுப்பு. கடுமையான தொற்றில் இலை உதிர்தல்.',
-                     'treatment':'Mancozeb 75WP @ 2.5 கிரா/லிட்டர் அல்லது Chlorothalonil 75WP @ 2 கிரா/லிட்டர். விதைத்த 30 நாட்களில் தொடங்கி 10–14 நாட்கள் இடைவெளியில் 3–4 தெளிப்பு.',
-                     'prevention':'எதிர்ப்பு இரகங்கள் பயன்படுத்தவும். பயிர் மாற்றம். அதிக நீர்ப்பாசனம் தவிர்க்கவும். பயிர் எச்சங்களை எரிக்கவும்.'},
-                ],
-            },
-            {
-                'name':'Turmeric','name_tamil':'மஞ்சள்','emoji':'🟡','category':'spice','season':'kharif',
-                'duration_days':'210–270 நாட்கள்','water_req':'1500–2250 மி.மீ',
-                'temp_range':'20–30°C; வெப்பமான ஈரமான காலநிலை சிறந்தது',
-                'soil_type':'நன்கு வடிகால் வசதியுள்ள கரிமப் பொருள் நிறைந்த கோட்டை மண்; நீர் தேங்கல் கூடாது',
-                'ph_range':'5.5 – 7.0','yield_per_ha':'20–30 டன்/ஹெக்டேர் (புதிய கிழங்கு)',
-                'market_price':'₹100–180/கிலோ (உலர்ந்த மஞ்சள்)',
-                'description':'Erode turmeric is world-famous for high curcumin content. Tamil Nadu produces 35% of India turmeric.',
-                'description_tamil':'ஈரோடு மஞ்சள் அதிக குர்குமின் உள்ளடக்கத்திற்காக உலகப் புகழ் பெற்றது. தமிழ்நாடு இந்தியாவின் மஞ்சள் உற்பத்தியில் சுமார் 35% உற்பத்தி செய்கிறது.',
-                'suitable_districts':'Erode, Salem, Nilgiris, Coimbatore, Tiruppur, Dindigul',
-                'varieties':[
-                    {'name':'BSR 1 (Erode Local)','duration':'270 நாட்கள்','yield_info':'30–35 டன்/ஹெ','specialty':'மிக அதிக குர்குமின் (6–7%), பிரகாசமான மஞ்சள், ஈரோடு சந்தையில் உயர் விலை','released_by':'TNAU'},
-                    {'name':'CO 2','duration':'240 நாட்கள்','yield_info':'28 டன்/ஹெ','specialty':'முன்கூட்டிய பழுக்கும், நடுத்தர குர்குமின், புதிய மற்றும் உலர்ந்த — இரண்டிற்கும் ஏற்றது','released_by':'TNAU Coimbatore'},
-                ],
-                'harvest':{
-                    'maturity_signs':'இலைகள் மஞ்சளாகி காய்கின்றன. போலி தண்டுகள் விழுகின்றன. கிழங்குகள் தோண்டினால் நன்கு வளர்ந்திருக்கும். தோல் கரடுமுரடாகும்.',
-                    'harvest_method':'வெட்டுக்கோல் அல்லது நாட்டு கலப்பையால் கிழங்குகளை தோண்டவும். விரல் கிழங்குகளை தாய் கிழங்கிலிருந்து பிரிக்கவும் (அடுத்த நடவிற்கு தாய் கிழங்கு வைக்கவும்).',
-                    'post_harvest':'வேகவைத்தல் (Curing): புதிய கிழங்குகளை 45–60 நிமிடம் வேகவைக்கவும். 10–15 நாட்கள் வெயிலில் காயவிடவும். பிறகு மெருகேற்றவும்.',
-                    'storage_tips':'உலர்ந்த மஞ்சளை சணல் பைகளில் குளிரான, நன்கு காற்றோட்டமுள்ள இடத்தில் சேமிக்கவும். ஈரப்பதம் எளிதில் உறிஞ்சும் — கவனமாக இருக்கவும்.',
-                    'best_time':'ஜனவரி–மார்ச் மாதங்களில் இரகத்திற்கு ஏற்ப அறுவடை செய்யவும்.','shelf_life':'உலர்ந்த மஞ்சள் 12–18 மாதங்கள்; முழு விரல்கள் 24+ மாதங்கள்'
-                },
-                'diseases':[
-                    {'name':'Rhizome Rot','name_tamil':'கிழங்கு அழுகல் நோய்','severity':'critical',
-                     'symptoms':'இலைகள் கீழ் பகுதியிலிருந்து மஞ்சளாகி வாடும். மண் அருகே கழுத்தில் கருப்பு-பழுப்பு நீர் நனைந்த புண்கள். கிழங்கு மென்மையாகி கெட்ட வாசனையுடன் அழுகும்.',
-                     'treatment':'Metalaxyl 8% + Mancozeb 64% WP @ 3 கிரா/லிட்டர் கொண்டு மண்ணை நனைக்கவும். விதை கிழங்குகளை Trichoderma @ 10 கிரா/கிலோ கொண்டு சேர்த்து வைக்கவும்.',
-                     'prevention':'நீர் தேங்கல் தவிர்க்கவும் — வடிகால் வசதி அமைக்கவும். ஆரோக்கியமான விதை கிழங்குகளை மட்டும் பயன்படுத்தவும். Trichoderma viride பயன்படுத்தவும். பயிர் மாற்றம் செய்யவும்.'},
-                ],
-            },
+            # (name, name_ta, emoji, cat, season, dur, water, temp, soil, ph, yield_, price, desc_en, desc_ta, districts)
+            ('Paddy (Rice)', 'நெல்', '🌾', 'grain', 'Kharif & Rabi',
+             '110–130 days', '1200–2000 mm', '20–35°C', 'Clay loam, alluvial', '5.5–7.0',
+             '4–6 tonnes/ha', '₹1800–2200/quintal',
+             'Paddy is the most important crop of Tamil Nadu. Cultivated in delta regions with abundant water supply.',
+             'நெல் தமிழ்நாட்டின் மிக முக்கியமான பயிர். கோடை மற்றும் குளிர்காலத்தில் பயிரிடப்படுகிறது.',
+             'Thanjavur, Tiruvarur, Nagapattinam, Trichy'),
+
+            ('Tomato', 'தக்காளி', '🍅', 'vegetable', 'Year-round',
+             '60–90 days', '400–600 mm', '20–27°C', 'Sandy loam, well-drained', '6.0–7.0',
+             '25–40 tonnes/ha', '₹800–2000/quintal',
+             'Tomato is a high-value vegetable crop grown across Tamil Nadu with excellent market demand.',
+             'தக்காளி அதிக மதிப்புடைய காய்கறி. தமிழ்நாடு முழுவதும் நன்கு சந்தை தேவை உள்ளது.',
+             'Dharmapuri, Salem, Coimbatore, Dindigul'),
+
+            ('Onion', 'வெங்காயம்', '🧅', 'vegetable', 'Rabi',
+             '90–120 days', '350–500 mm', '15–30°C', 'Loamy, well-drained', '6.0–7.5',
+             '20–30 tonnes/ha', '₹600–1500/quintal',
+             'Onion is a major commercial vegetable crop with high export potential.',
+             'வெங்காயம் முக்கிய வணிக காய்கறி பயிர், ஏற்றுமதி திறன் அதிகம்.',
+             'Perambalur, Pudukottai, Namakkal, Salem'),
+
+            ('Sugarcane', 'கரும்பு', '🎋', 'commercial', 'Year-round',
+             '10–18 months', '1500–2500 mm', '20–35°C', 'Deep loamy, alluvial', '6.0–8.0',
+             '80–120 tonnes/ha', '₹2800–3200/tonne',
+             'Sugarcane is a major cash crop used for sugar and jaggery production.',
+             'கரும்பு சர்க்கரை மற்றும் வெல்லம் தயாரிப்புக்கு பயன்படுத்தப்படும் முக்கிய வணிக பயிர்.',
+             'Erode, Vellore, Tiruvannamalai, Cuddalore'),
+
+            ('Banana', 'வாழை', '🍌', 'fruit', 'Year-round',
+             '11–18 months', '1200–2200 mm', '25–35°C', 'Sandy loam, rich in organic matter', '5.5–7.0',
+             '25–40 tonnes/ha', '₹1200–2000/quintal',
+             'Banana is Tamil Nadu\'s most important fruit crop with varieties like Poovan and Nendran.',
+             'வாழை தமிழ்நாட்டின் மிக முக்கியமான பழப் பயிர். பூவன் மற்றும் நேந்திரம் பிரபல ரகங்கள்.',
+             'Theni, Dindigul, Trichy, Erode'),
+
+            ('Groundnut', 'நிலக்கடலை', '🥜', 'oilseed', 'Kharif & Rabi',
+             '90–130 days', '500–700 mm', '25–30°C', 'Sandy loam, red soil', '6.0–7.0',
+             '1.5–2.5 tonnes/ha', '₹4500–5500/quintal',
+             'Groundnut is the main oilseed crop of Tamil Nadu, grown in red soil areas.',
+             'நிலக்கடலை தமிழ்நாட்டின் முக்கிய எண்ணெய் வித்து பயிர். சிவப்பு மண் பகுதிகளில் நன்கு வளரும்.',
+             'Vellore, Villupuram, Tiruvannamalai, Cuddalore'),
+
+            ('Turmeric', 'மஞ்சள்', '🟡', 'spice', 'Kharif',
+             '7–9 months', '1500–2000 mm', '20–30°C', 'Sandy loam, clay loam', '5.5–7.0',
+             '20–25 tonnes/ha (fresh)', '₹6000–9000/quintal',
+             'Erode district is the turmeric hub of India. Tamil Nadu produces premium quality turmeric.',
+             'ஈரோடு மாவட்டம் இந்தியாவின் மஞ்சள் தலைநகரம். தமிழ்நாடு உயர்தர மஞ்சள் உற்பத்தி செய்கிறது.',
+             'Erode, Salem, Coimbatore, Namakkal'),
+
+            ('Maize', 'மக்காச்சோளம்', '🌽', 'grain', 'Kharif & Rabi',
+             '90–110 days', '600–900 mm', '18–27°C', 'Sandy loam, well-drained', '5.5–7.0',
+             '4–8 tonnes/ha', '₹1700–2000/quintal',
+             'Maize is a versatile crop used for food, fodder and industrial purposes.',
+             'மக்காச்சோளம் உணவு, தீவனம் மற்றும் தொழில் ரீதியான பயன்பாட்டிற்கு பயன்படுகிறது.',
+             'Dharmapuri, Salem, Krishnagiri, Vellore'),
+
+            ('Black Gram (Urad)', 'கருப்பு உளுந்து', '🫘', 'pulse', 'Kharif & Rabi',
+             '70–90 days', '300–500 mm', '25–35°C', 'Sandy loam, clay loam', '6.0–7.5',
+             '0.6–1.2 tonnes/ha', '₹5000–7000/quintal',
+             'Black gram is an important pulse crop rich in protein, widely used in Tamil cuisine.',
+             'கருப்பு உளுந்து புரதச்சத்து நிறைந்த முக்கியமான பருப்பு வகை பயிர்.',
+             'Trichy, Madurai, Pudukkottai, Dindigul'),
+
+            ('Green Gram (Moong)', 'பச்சை பயறு', '💚', 'pulse', 'Year-round',
+             '60–75 days', '300–400 mm', '25–35°C', 'Sandy loam, alluvial', '6.0–7.5',
+             '0.5–1.0 tonnes/ha', '₹6000–8000/quintal',
+             'Green gram is a short-duration pulse crop suitable for multiple cropping systems.',
+             'பச்சை பயறு குறுகிய காலம் கொண்ட பருப்பு வகை பயிர், பல பயிர் முறைக்கு ஏற்றது.',
+             'Madurai, Virudhunagar, Ramanathapuram, Sivaganga'),
+
+            ('Chilli', 'மிளகாய்', '🌶️', 'spice', 'Kharif & Rabi',
+             '90–150 days', '600–1200 mm', '20–30°C', 'Sandy loam, clay loam', '6.0–7.5',
+             '3–5 tonnes/ha (dry)', '₹8000–15000/quintal',
+             'Chilli is an important spice crop with good export value. Varieties like K1, K2 popular.',
+             'மிளகாய் முக்கியமான மசாலா பயிர், நல்ல ஏற்றுமதி மதிப்பு கொண்டது. K1, K2 ரகங்கள் பிரபலம்.',
+             'Ramanathapuram, Virudhunagar, Madurai, Sivaganga'),
+
+            ('Brinjal (Eggplant)', 'கத்தரிக்காய்', '🍆', 'vegetable', 'Year-round',
+             '60–120 days', '500–700 mm', '22–32°C', 'Sandy loam, clay loam', '5.5–6.8',
+             '20–40 tonnes/ha', '₹600–1200/quintal',
+             'Brinjal is cultivated throughout Tamil Nadu with good adaptability to various soils.',
+             'கத்தரிக்காய் தமிழ்நாடு முழுவதும் பயிரிடப்படுகிறது, பல்வேறு மண் வகைகளுக்கு பொருந்தும்.',
+             'Coimbatore, Salem, Trichy, Madurai'),
+
+            ('Lady Finger (Okra)', 'வெண்டைக்காய்', '🌿', 'vegetable', 'Year-round',
+             '45–60 days', '500–700 mm', '24–35°C', 'Sandy loam, loamy', '6.0–7.5',
+             '6–10 tonnes/ha', '₹800–1500/quintal',
+             'Lady finger (Bhindi) is a popular summer vegetable with high nutritional value.',
+             'வெண்டைக்காய் அதிக சத்துமிக்க பிரபலமான கோடைகால காய்கறி.',
+             'Coimbatore, Erode, Salem, Trichy'),
+
+            ('Potato', 'உருளைக்கிழங்கு', '🥔', 'vegetable', 'Rabi',
+             '80–120 days', '400–600 mm', '15–25°C', 'Sandy loam, loamy', '5.5–6.5',
+             '20–30 tonnes/ha', '₹800–1500/quintal',
+             'Potato is a cool-weather crop grown mainly in Nilgiris and hilly areas.',
+             'உருளைக்கிழங்கு குளிர்கால பயிர், முக்கியமாக நீலகிரி மற்றும் மலை பகுதிகளில் வளர்க்கப்படுகிறது.',
+             'Nilgiris, Coimbatore, Dindigul'),
+
+            ('Cabbage', 'முட்டைகோஸ்', '🥬', 'vegetable', 'Rabi',
+             '60–90 days', '400–600 mm', '15–25°C', 'Sandy loam, well-drained', '6.0–7.0',
+             '25–40 tonnes/ha', '₹400–800/quintal',
+             'Cabbage is a cool-season vegetable with high demand in markets.',
+             'முட்டைகோஸ் குளிர்காலத்தில் வளரும் காய்கறி, சந்தையில் அதிக தேவை உள்ளது.',
+             'Nilgiris, Coimbatore, Dharmapuri, Salem'),
+
+            ('Cauliflower', 'காலிஃப்ளவர்', '🥦', 'vegetable', 'Rabi',
+             '55–80 days', '400–600 mm', '15–25°C', 'Sandy loam, clay loam', '6.0–7.5',
+             '15–25 tonnes/ha', '₹600–1200/quintal',
+             'Cauliflower is a high-value winter vegetable with good nutritional content.',
+             'காலிஃப்ளவர் அதிக மதிப்புடைய குளிர்கால காய்கறி, சத்தான உணவு.',
+             'Nilgiris, Coimbatore, Krishnagiri'),
+
+            ('Carrot', 'கேரட்', '🥕', 'vegetable', 'Rabi',
+             '80–120 days', '400–500 mm', '16–24°C', 'Sandy loam, loose loamy', '6.0–7.0',
+             '20–30 tonnes/ha', '₹600–1200/quintal',
+             'Carrot is a root vegetable grown in cool hilly areas, rich in beta-carotene.',
+             'கேரட் குளிர் மலை பகுதிகளில் வளரும் கிழங்கு காய்கறி, பீட்டா கரோட்டின் நிறைந்தது.',
+             'Nilgiris, Coimbatore, Kodaikanal'),
+
+            ('Beans (French)', 'பீன்ஸ்', '🫘', 'vegetable', 'Kharif & Rabi',
+             '50–70 days', '400–600 mm', '15–25°C', 'Sandy loam, well-drained', '6.0–7.5',
+             '8–12 tonnes/ha', '₹800–1500/quintal',
+             'French beans is a popular vegetable crop with high export potential.',
+             'பீன்ஸ் அதிக ஏற்றுமதி திறன் கொண்ட பிரபலமான காய்கறி பயிர்.',
+             'Nilgiris, Coimbatore, Dharmapuri'),
+
+            ('Bitter Gourd', 'பாவக்காய்', '🫑', 'vegetable', 'Year-round',
+             '55–65 days', '600–800 mm', '24–35°C', 'Sandy loam, loamy', '6.0–7.5',
+             '8–12 tonnes/ha', '₹800–1500/quintal',
+             'Bitter gourd has high medicinal value and is cultivated year-round in Tamil Nadu.',
+             'பாவக்காய் அதிக மருத்துவ மதிப்பு கொண்டது, ஆண்டு முழுவதும் பயிரிடப்படுகிறது.',
+             'Madurai, Dindigul, Trichy, Salem'),
+
+            ('Mango', 'மாம்பழம்', '🥭', 'fruit', 'Summer',
+             '3–5 years (first yield)', '900–1500 mm', '25–35°C', 'Deep loamy, alluvial', '5.5–7.5',
+             '10–15 tonnes/ha', '₹3000–6000/quintal',
+             'Tamil Nadu is famous for Alphonso, Bangalora and Neelam mango varieties.',
+             'தமிழ்நாடு அல்ஃபோன்ஸோ, பங்களோரா மற்றும் நீலம் மாம்பழ ரகங்களுக்கு பிரபலமானது.',
+             'Krishnagiri, Dharmapuri, Salem, Vellore'),
+
+            ('Papaya', 'பப்பாளி', '🧡', 'fruit', 'Year-round',
+             '9–11 months (first yield)', '1000–1500 mm', '25–35°C', 'Sandy loam, loamy', '6.0–7.0',
+             '50–80 tonnes/ha', '₹800–1500/quintal',
+             'Papaya is a fast-bearing fruit crop with both fresh consumption and processing value.',
+             'பப்பாளி விரைவில் காய்க்கும் பழப் பயிர், புதிய உண்ணல் மற்றும் பதப்படுத்துவதற்கு பயன்படுகிறது.',
+             'Coimbatore, Salem, Erode, Trichy'),
+
+            ('Guava', 'கொய்யா', '🍈', 'fruit', 'Year-round',
+             '2–3 years (first yield)', '1000–2000 mm', '23–28°C', 'Sandy loam, alluvial', '4.5–8.0',
+             '15–25 tonnes/ha', '₹1200–2000/quintal',
+             'Guava is a hardy fruit crop rich in Vitamin C with high market demand.',
+             'கொய்யா வைட்டமின் C நிறைந்த, சந்தையில் அதிக தேவை உள்ள கடினமான பழப் பயிர்.',
+             'Krishnagiri, Vellore, Salem, Trichy'),
+
+            ('Coconut', 'தென்னை', '🥥', 'plantation', 'Year-round',
+             '5–7 years (first yield)', '1500–2500 mm', '27–32°C', 'Sandy loam, alluvial, laterite', '5.5–8.0',
+             '60–80 nuts/palm/year', '₹15–25/nut',
+             'Tamil Nadu is the second-largest coconut producer in India. Coimbatore is the hub.',
+             'தமிழ்நாடு இந்தியாவின் இரண்டாவது பெரிய தேங்காய் உற்பத்தியாளர். கோயம்புத்தூர் மையம்.',
+             'Coimbatore, Erode, Salem, Tirupur'),
+
+            ('Lemon', 'எலுமிச்சை', '🍋', 'fruit', 'Year-round',
+             '2–3 years (first yield)', '750–1200 mm', '20–30°C', 'Sandy loam, loamy', '5.5–7.5',
+             '10–15 tonnes/ha', '₹2000–4000/quintal',
+             'Lemon is an important citrus crop with good market demand throughout the year.',
+             'எலுமிச்சை ஆண்டு முழுவதும் நல்ல சந்தை தேவை கொண்ட முக்கியமான சிட்ரஸ் பயிர்.',
+             'Vellore, Krishnagiri, Salem, Dharmapuri'),
+
+            ('Cotton', 'பருத்தி', '☁️', 'commercial', 'Kharif',
+             '160–200 days', '500–900 mm', '21–30°C', 'Black cotton soil, clay loam', '6.0–8.5',
+             '1.5–2.5 tonnes/ha (seed cotton)', '₹5500–6500/quintal',
+             'Cotton is a major commercial crop grown in black cotton soil areas of Tamil Nadu.',
+             'பருத்தி தமிழ்நாட்டின் கறுப்பு மண் பகுதிகளில் வளரும் முக்கிய வணிக பயிர்.',
+             'Coimbatore, Tirupur, Erode, Salem'),
+
+            ('Sunflower', 'சூரியகாந்தி', '🌻', 'oilseed', 'Kharif & Rabi',
+             '85–100 days', '500–750 mm', '20–30°C', 'Sandy loam, clay loam', '6.0–7.5',
+             '1.2–1.8 tonnes/ha', '₹4000–5000/quintal',
+             'Sunflower is an important oilseed crop with shorter duration and higher oil content.',
+             'சூரியகாந்தி குறுகிய கால முக்கியமான எண்ணெய் வித்து பயிர்.',
+             'Vellore, Tiruvannamalai, Villupuram, Cuddalore'),
+
+            ('Sesame', 'எள்', '🫙', 'oilseed', 'Kharif',
+             '70–90 days', '300–500 mm', '25–35°C', 'Sandy loam, red soil', '6.0–7.0',
+             '0.4–0.8 tonnes/ha', '₹8000–10000/quintal',
+             'Sesame is an ancient oilseed crop with high oil content and excellent market value.',
+             'எள் அதிக எண்ணெய் உள்ளடக்கம் மற்றும் சிறந்த சந்தை மதிப்பு கொண்ட பழமையான எண்ணெய் வித்து.',
+             'Ramanathapuram, Virudhunagar, Sivaganga, Tirunelveli'),
+
+            ('Ginger', 'இஞ்சி', '🫚', 'spice', 'Kharif',
+             '7–9 months', '1500–2500 mm', '22–28°C', 'Loamy, well-drained', '5.6–6.5',
+             '15–20 tonnes/ha (fresh)', '₹4000–8000/quintal',
+             'Ginger is a high-value spice crop grown in humid forest-edge areas.',
+             'இஞ்சி அதிக மதிப்புடைய மசாலா பயிர், ஈர காடோர பகுதிகளில் வளர்க்கப்படுகிறது.',
+             'Erode, Coimbatore, Salem, Dharmapuri'),
+
+            ('Garlic', 'பூண்டு', '🧄', 'spice', 'Rabi',
+             '120–150 days', '400–600 mm', '15–25°C', 'Sandy loam, loamy', '6.0–7.5',
+             '8–12 tonnes/ha', '₹3000–6000/quintal',
+             'Garlic is an important spice with high market demand and good storage life.',
+             'பூண்டு சந்தையில் அதிக தேவை மற்றும் நீண்ட சேமிப்பு ஆயுள் கொண்ட முக்கியமான மசாலா.',
+             'Trichy, Madurai, Salem, Namakkal'),
+
+            ('Coriander', 'கொத்தமல்லி', '🌿', 'spice', 'Rabi',
+             '45–60 days', '300–400 mm', '20–30°C', 'Sandy loam, loamy', '6.0–7.5',
+             '0.8–1.2 tonnes/ha (dry seed)', '₹6000–9000/quintal',
+             'Coriander is used as fresh herb and dry spice. Short-duration profitable crop.',
+             'கொத்தமல்லி புதிய மூலிகையாகவும் உலர் மசாலாவாகவும் பயன்படுத்தப்படுகிறது.',
+             'Salem, Erode, Coimbatore, Namakkal'),
+
+            ('Ragi (Finger Millet)', 'ராகி', '🌾', 'grain', 'Kharif',
+             '90–130 days', '500–800 mm', '20–30°C', 'Sandy loam, red soil', '5.5–7.0',
+             '2–4 tonnes/ha', '₹2200–2800/quintal',
+             'Ragi is a drought-resistant nutritious millet crop, excellent for dry farming.',
+             'ராகி வறட்சியை தாங்கும் சத்துமிக்க சிறுதானிய பயிர், வறண்ட விவசாயத்திற்கு சிறந்தது.',
+             'Salem, Dharmapuri, Krishnagiri, Vellore'),
+
+            ('Sorghum (Jowar)', 'சோளம்', '🌾', 'grain', 'Kharif & Rabi',
+             '100–120 days', '400–700 mm', '25–35°C', 'Sandy loam, clay loam, black soil', '6.0–7.5',
+             '2–4 tonnes/ha', '₹1800–2400/quintal',
+             'Sorghum is a drought-tolerant crop used for food, fodder and industrial purposes.',
+             'சோளம் வறட்சியை தாங்கும் பயிர், உணவு, தீவனம் மற்றும் தொழில் ரீதியாக பயன்படுகிறது.',
+             'Madurai, Virudhunagar, Ramanathapuram, Dindigul'),
+
+            ('Pearl Millet (Kambu)', 'கம்பு', '🌾', 'grain', 'Kharif',
+             '65–90 days', '300–500 mm', '25–35°C', 'Sandy, sandy loam', '6.0–7.5',
+             '1.5–3.0 tonnes/ha', '₹1800–2400/quintal',
+             'Kambu (Pearl millet) is a drought-resistant crop ideal for dry zones of Tamil Nadu.',
+             'கம்பு வறட்சியை தாங்கும் பயிர், தமிழ்நாட்டின் வறண்ட மண்டலங்களுக்கு ஏற்றது.',
+             'Ramanathapuram, Virudhunagar, Sivaganga, Madurai'),
+
+            ('Chickpea (Bengal Gram)', 'கடலை', '🟡', 'pulse', 'Rabi',
+             '90–120 days', '300–500 mm', '15–29°C', 'Sandy loam, clay loam', '6.0–8.0',
+             '0.8–1.5 tonnes/ha', '₹5000–7000/quintal',
+             'Chickpea is a cool-season pulse crop rich in protein with high market demand.',
+             'கடலை புரதம் நிறைந்த குளிர்கால பருப்பு வகை பயிர், சந்தையில் அதிக தேவை.',
+             'Coimbatore, Salem, Krishnagiri, Dharmapuri'),
+
+            ('Castor', 'ஆமணக்கு', '🌿', 'oilseed', 'Kharif',
+             '150–180 days', '500–750 mm', '20–30°C', 'Sandy loam, deep loamy', '5.5–7.5',
+             '1.5–2.5 tonnes/ha', '₹5000–6500/quintal',
+             'Castor is an industrial oilseed crop with high demand for lubricants and cosmetics.',
+             'ஆமணக்கு தொழில்துறை எண்ணெய் வித்து பயிர், உயவுக்கு மற்றும் அழகுசாதனப் பொருட்களில் பயன்படுகிறது.',
+             'Tiruvannamalai, Villupuram, Cuddalore, Pondicherry'),
         ]
 
-        for cd in crops_data:
+        for data in crops_data:
+            (name, name_ta, emoji, cat, season, dur, water, temp, soil, ph,
+             yield_, price, desc_en, desc_ta, districts) = data
             crop = Crop.objects.create(
-                name=cd['name'], name_tamil=cd['name_tamil'], emoji=cd['emoji'],
-                category=cd['category'], season=cd['season'], duration_days=cd['duration_days'],
-                water_req=cd['water_req'], temp_range=cd['temp_range'], soil_type=cd['soil_type'],
-                ph_range=cd['ph_range'], yield_per_ha=cd['yield_per_ha'], market_price=cd['market_price'],
-                description=cd['description'], description_tamil=cd.get('description_tamil',''),
-                suitable_districts=cd.get('suitable_districts',''),
+                name=name, name_tamil=name_ta, emoji=emoji, category=cat,
+                season=season, duration_days=dur, water_req=water,
+                temp_range=temp, soil_type=soil, ph_range=ph,
+                yield_per_ha=yield_, market_price=price,
+                description=desc_en, description_tamil=desc_ta,
+                suitable_districts=districts
             )
-            for v in cd.get('varieties',[]):
-                CropVariety.objects.create(crop=crop, **v)
-            h = cd.get('harvest',{})
-            if h:
-                HarvestingGuide.objects.create(crop=crop, **h)
-            for d in cd.get('diseases',[]):
-                CropDisease.objects.create(crop=crop, **d)
+            # Add varieties for each crop
+            CropVariety.objects.create(crop=crop, name=f'{name} - Improved Variety',
+                duration=dur, yield_info=yield_, specialty='High yielding, disease resistant',
+                released_by='TNAU')
+            # Harvesting guide
+            HarvestingGuide.objects.create(crop=crop,
+                maturity_signs='Leaves turning yellow, grains hardening, typical crop color change',
+                harvest_method='Manual or mechanical harvesting based on crop type and field size',
+                post_harvest='Proper drying, cleaning and grading before storage',
+                storage_tips='Store in cool dry place. Use hermetic bags for grains.',
+                best_time='Morning hours to avoid heat stress',
+                shelf_life='2–6 months depending on storage conditions')
+            # Disease
+            CropDisease.objects.create(crop=crop,
+                name='Leaf Blight', name_tamil='இலை கருகல்',
+                symptoms='Brown spots on leaves, yellowing, wilting',
+                treatment='Spray Mancozeb 2g/litre or Copper Oxychloride 3g/litre',
+                prevention='Crop rotation, seed treatment, balanced fertilization',
+                severity='Medium')
 
-        self.stdout.write(f'  ✅ {len(crops_data)} crops seeded')
+        self.stdout.write(f'  ✅ {Crop.objects.count()} crops created')
 
     def _fertilizers(self):
         Fertilizer.objects.all().delete()
-        data = [
-            {'name':'Urea (யூரியா)','name_tamil':'யூரியா','emoji':'⚗️','ftype':'inorganic','npk_ratio':'46-0-0',
-             'dosage':'நெல்லிற்கு: 120–150 கிரா/ஹெக்டேர் (2–3 பிரிவுகளில்). காய்கறிகளுக்கு: 60–80 கிரா/ஹெக்டேர். அடிப்படை, பின்னர் top-dress என பிரிக்கவும்.',
-             'suitable_crops':'அனைத்து பயிர்களும் — குறிப்பாக நெல், மக்காச்சோளம், கரும்பு, காய்கறிகள்',
-             'application':'ஒளிபரப்பு அல்லது வரிசை முறையில் இடவும். மழைக்கு முன் இடாதீர்கள் — கசிவு ஏற்படும். மண்ணில் கலக்கவும்.',
-             'benefits':'விரைவான நைட்ரஜன் மூலம். அடர் பச்சை இலைகள், செழிப்பான வளர்ச்சி மற்றும் அதிக மகசூல். மலிவான நைட்ரஜன் உரம்.',
-             'price_range':'₹266/பை (45 கிரா) — மானியத்தில்'},
-            {'name':'DAP (டி.ஏ.பி)','name_tamil':'டி-அம்மோனியம் பாஸ்பேட்','emoji':'🔵','ftype':'inorganic','npk_ratio':'18-46-0',
-             'dosage':'100–125 கிரா/ஹெக்டேர் அடிப்படை உரமாக. நடவு/விதைப்பதற்கு முன் இடவும்.',
-             'suitable_crops':'நெல், கோதுமை, பயறு வகைகள், எண்ணெய் விதைகள், காய்கறிகள் — அடிப்படை உரமாக',
-             'application':'கடைசி உழவின் போது மண்ணில் கலக்கவும். யூரியாவுடன் நேரடியாக கலக்காதீர்கள் — நைட்ரஜன் இழப்பு ஏற்படும்.',
-             'benefits':'நைட்ரஜன் மற்றும் பாஸ்பரஸ் இரண்டும் ஒரே நேரத்தில் கிடைக்கும். வேர் வளர்ச்சி, முன்கூட்டிய தழைப்பு மற்றும் பூக்கும் நிலை சிறந்திருக்கும்.',
-             'price_range':'₹1350/பை (50 கிரா) — மானியத்தில்'},
-            {'name':'MOP (பொட்டாஷ்)','name_tamil':'மியூரியேட் ஆஃப் பொட்டாஷ்','emoji':'🟠','ftype':'inorganic','npk_ratio':'0-0-60',
-             'dosage':'50–80 கிரா/ஹெக்டேர். அடிப்படை உரமாக அல்லது முதல் பிரிவில் இடவும். உப்பு மண்ணில் தவிர்க்கவும்.',
-             'suitable_crops':'உருளைக்கிழங்கு, வாழை, கரும்பு, தக்காளி, கிழங்கு மற்றும் பழ பயிர்கள்',
-             'application':'நடவதற்கு முன் மண்ணில் கலக்கவும். 30 நாட்களில் top-dress ஆகவும் இடலாம்.',
-             'benefits':'பழத்தின் தரம், நோய் எதிர்ப்பு, வறட்சி தாங்கும் தன்மை மற்றும் சேமிப்பு காலம் அதிகரிக்கும். மாவு மற்றும் சர்க்கரை உருவாக்கத்திற்கு அவசியம்.',
-             'price_range':'₹1700/பை (50 கிரா) — மானியத்தில்'},
-            {'name':'Vermicompost (மண்புழு உரம்)','name_tamil':'மண்புழு உரம்','emoji':'🪱','ftype':'organic','npk_ratio':'1.5-0.5-1.0 + நுண்ணூட்டங்கள்',
-             'dosage':'2–4 டன்/ஹெக்டேர் அடிப்படை உரமாக. நடவு குழிகளில் கலந்து இடுவது சிறந்தது.',
-             'suitable_crops':'அனைத்து பயிர்களும் — குறிப்பாக காய்கறிகள், பழ பயிர்கள், மலர்கள், நர்சரி தாவரங்கள்',
-             'application':'வரிசைகளில் அல்லது மேல் 15 செ.மீ மண்ணில் கலக்கவும். பல்லாண்டு பயிர்களுக்கு குழிகளில் நிரப்பவும்.',
-             'benefits':'மண் அமைப்பு, நீர் தாங்கும் திறன், நுண்ணுயிர் செயல்பாடு மேம்படும். மெதுவான வெளியீட்டு ஊட்டச்சத்து. இயற்கை நோய் எதிர்ப்பு.',
-             'price_range':'₹6–10/கிலோ'},
-            {'name':'FYM (தொழு உரம்)','name_tamil':'தொழு உரம் / கால்நடை எரு','emoji':'🌿','ftype':'organic','npk_ratio':'0.5-0.25-0.5',
-             'dosage':'10–25 டன்/ஹெக்டேர். நன்கு மக்கிய தொழு உரம் மட்டுமே பயன்படுத்தவும்.',
-             'suitable_crops':'அனைத்து பயிர்களும் — குறிப்பாக மணல் மண்ணிற்கு மிகவும் பயனுள்ளது',
-             'application':'நடவதற்கு 3–4 வாரங்களுக்கு முன் மண்ணில் கலந்து விடவும் — மக்க போதுமான நேரம் வேண்டும்.',
-             'benefits':'மண் அமைப்பை மேம்படுத்துகிறது, ஹியூமஸ் தருகிறது, நுண்ணுயிர்களுக்கு உணவளிக்கிறது. களிமண் மண்ணில் வடிகால் மற்றும் மணல் மண்ணில் நீர் தாங்கும் திறன் மேம்படும்.',
-             'price_range':'₹500–1500/டன்'},
-            {'name':'Neem Cake (வேப்பம் புண்ணாக்கு)','name_tamil':'வேப்பம் புண்ணாக்கு','emoji':'🌱','ftype':'organic','npk_ratio':'5-1-1.5 + Azadirachtin',
-             'dosage':'200–400 கிரா/ஹெக்டேர் அடிப்படை உரமாக. நடவதற்கு முன் மண்ணில் கலக்கவும்.',
-             'suitable_crops':'காய்கறிகள், நெல், மஞ்சள், நிலக்கடலை — மண்ணில் உள்ள பூச்சிகளை கட்டுப்படுத்த சிறந்தது',
-             'application':'வரிசைகளில் அல்லது ஒளிபரப்பு முறையில் இட்டு மண்ணில் கலக்கவும். நர்சரி மண் கலவையிலும் சேர்க்கலாம்.',
-             'benefits':'மண்ணில் உள்ள பூச்சிகள் மற்றும் நூற்புழுக்களை அடக்குகிறது. நைட்ரிஃபிகேஷன் தடுப்பான் — யூரியா மெதுவாக உடைகிறது. இயற்கை பூச்சி விரட்டி.',
-             'price_range':'₹12–18/கிலோ'},
-            {'name':'Rhizobium (ரைசோபியம்)','name_tamil':'ரைசோபியம் உயிர் உரம்','emoji':'🦠','ftype':'bio','npk_ratio':'நைட்ரஜன் நிலைப்படுத்தல் 20–30 கிரா N/ஹெக்டேர்',
-             'dosage':'விதை சேர்க்கை: 200 கிரா கலாச்சாரம் + 200 மி.லி தண்ணீர் — 10 கிரா விதைக்கு. மண் பயன்பாடு: 2 கிரா கலாச்சாரம் + 25 கிரா தொழு உரம்/ஹெக்டேர்.',
-             'suitable_crops':'அனைத்து பயறு வகைகள்: நிலக்கடலை, பாசிப்பயறு, உளுந்து, சோயாபீன், தட்டைப்பயறு, கொண்டைக்கடலை',
-             'application':'விதைக்கு முன் கலாச்சாரத்தை நிழலில் விதைகளுடன் கலக்கவும். நேரடி வெயிலில் வைக்காதீர்கள். பூஞ்சை மருந்துடன் கலக்காதீர்கள்.',
-             'benefits':'காற்றிலுள்ள நைட்ரஜனை நிலைப்படுத்துகிறது — 25–30 கிரா N/ஹெக்டேர் சேமிக்கலாம் (60 கிரா யூரியாவுக்கு சமம்). மகசூல் 15–20% அதிகரிக்கும். பணம் மிச்சம். சுற்றுச்சூழல் நட்பு.',
-             'price_range':'₹40–60/பொட்டலம் (200 கிரா)'},
-            {'name':'NPK 19:19:19','name_tamil':'NPK 19:19:19 கலவை உரம்','emoji':'🧪','ftype':'npk','npk_ratio':'19-19-19',
-             'dosage':'இலை தெளிப்பிற்கு: 3–5 கிரா/லிட்டர் தண்ணீர். மண்ணில்: 150–200 கிரா/ஹெக்டேர்.',
-             'suitable_crops':'அனைத்து பயிர்களும் — குறிப்பாக NPK குறைபாட்டில் இலை தெளிப்பிற்கு',
-             'application':'காலை அல்லது மாலை வேளையில் இலை தெளிக்கவும். சொட்டு நீர்ப்பாசனத்தில் Fertigation மூலமும் இடலாம்.',
-             'benefits':'ஒரே பொருளில் சமச்சீர் NPK ஊட்டச்சத்து. குறைபாட்டை விரைவாக சரிசெய்யும். Fertigation-க்கு ஏற்ற கரையக்கூடிய உரம்.',
-             'price_range':'₹80–120/கிலோ'},
+        ferts = [
+            ('Urea', 'யூரியா', 'chemical', '46-0-0', '100-150 kg/acre', 'All crops esp. paddy, maize', 'Broadcast or band application', 'Quick nitrogen supply, promotes vegetative growth', '₹260–290/bag (50kg)', '🌿'),
+            ('DAP', 'டி.ஏ.பி', 'chemical', '18-46-0', '50-75 kg/acre', 'All crops', 'Basal application at sowing', 'Phosphorus supply, root development', '₹1200–1400/bag (50kg)', '🔵'),
+            ('MOP (Potash)', 'பொட்டாஷ்', 'chemical', '0-0-60', '30-50 kg/acre', 'Sugarcane, banana, potato', 'Basal or split application', 'Improves quality, disease resistance', '₹700–900/bag (50kg)', '🟠'),
+            ('Vermicompost', 'மண்புழு உரம்', 'organic', 'N/A', '500 kg–1 tonne/acre', 'All crops', 'Mixed in soil before planting', 'Improves soil health, water retention, microbial activity', '₹8–12/kg', '🪱'),
+            ('FYM', 'தொழு உரம்', 'organic', 'N/A', '2–4 tonnes/acre', 'All crops', 'Apply 3-4 weeks before sowing', 'Long-lasting soil improvement, complete nutrition', '₹2–5/kg', '🐄'),
+            ('Neem Cake', 'வேப்பம் புண்ணாக்கு', 'organic', '4-1-1.5', '100-150 kg/acre', 'All crops', 'Mix in soil before sowing', 'Pest repellent, slow-release N, nematode control', '₹15–20/kg', '🌿'),
+            ('NPK 19:19:19', 'NPK 19:19:19', 'chemical', '19-19-19', '3-5 kg/acre (foliar)', 'Vegetables, fruits', 'Foliar spray or drip', 'Balanced nutrition, ideal for hydroponics', '₹2800–3200/bag (25kg)', '🔷'),
+            ('Rhizobium', 'ரைசோபியம்', 'biofertilizer', 'N/A', '200g/10kg seed', 'Pulses, legumes', 'Seed treatment', 'Nitrogen fixation, reduces urea need by 25kg', '₹40–60/packet', '🦠'),
+            ('Azospirillum', 'அசோஸ்பிரில்லம்', 'biofertilizer', 'N/A', '2kg/acre', 'Cereals, maize, sorghum', 'Soil application or seedling dip', 'Nitrogen fixation in non-legume crops', '₹40–60/packet', '🧬'),
+            ('Phosphobacteria', 'பாஸ்போபாக்டீரியா', 'biofertilizer', 'N/A', '2kg/acre', 'All crops', 'Mix with FYM, soil application', 'Converts insoluble P to soluble form', '₹40–60/packet', '💊'),
         ]
-        for d in data:
-            Fertilizer.objects.create(**d)
-        self.stdout.write(f'  ✅ {len(data)} fertilizers seeded')
+        for f in ferts:
+            Fertilizer.objects.create(name=f[0], name_tamil=f[1], ftype=f[2], npk_ratio=f[3],
+                dosage=f[4], suitable_crops=f[5], application=f[6], benefits=f[7], price_range=f[8], emoji=f[9])
+        self.stdout.write(f'  ✅ {Fertilizer.objects.count()} fertilizers created')
 
     def _pesticides(self):
         Pesticide.objects.all().delete()
-        data = [
-            {'name':'Chlorpyrifos 20EC','emoji':'🛡️','ptype':'insecticide','is_organic':False,
-             'active_ingredient':'Chlorpyrifos 20% EC — Organophosphate குழு',
-             'target_pests':'நெல்லில் தண்டு துளைப்பான், Cutworm, அசுவினி, White Grub, கறையான், இலை சுரங்கம்',
-             'dosage':'2.5 மி.லி/லிட்டர் தண்ணீர் — இலை தெளிப்பிற்கு; 3–4 லிட்டர்/ஹெக்டேர் — மண் நனைப்பிற்கு',
-             'safety_interval':'அறுவடைக்கு 15 நாட்கள் முன்பு நிறுத்தவும் (PHI)',
-             'precautions':'⚠️ முழு PPE அணியவும் — கையுறை, முகமூடி, கண்ணாடி. மீன் மற்றும் நீர்வாழ் உயிர்களுக்கு மிகவும் நச்சானது. நீர்நிலைகள் அருகே தெளிக்காதீர்கள். பூக்கும் நேரத்தில் தெளிக்காதீர்கள் — தேனீக்களுக்கு தீங்கு.'},
-            {'name':'Lambda-Cyhalothrin 5EC','emoji':'⚔️','ptype':'insecticide','is_organic':False,
-             'active_ingredient':'Lambda-Cyhalothrin 5% EC — Pyrethroid குழு',
-             'target_pests':'பருத்தி காய்ப்புழு, கொத்துப்புழு, அசுவினி, இடிப்பான், வெள்ளை ஈ, இலை சாப்பிடும் கம்பளிப்புழுக்கள்',
-             'dosage':'0.5–0.75 மி.லி/லிட்டர் தண்ணீர் — இலை தெளிப்பிற்கு',
-             'safety_interval':'அறுவடைக்கு 7 நாட்கள் முன்பு நிறுத்தவும்',
-             'precautions':'⚠️ PPE அணியவும். மீன் மற்றும் நன்மை செய்யும் பூச்சிகளுக்கு மிகவும் நச்சானது. பூக்கும் பயிர்களில் தெளிக்காதீர்கள். எதிர்ப்பு ஏற்படாமல் வேறு குழு மருந்துகளுடன் மாற்றி தெளிக்கவும்.'},
-            {'name':'Mancozeb 75WP','emoji':'🍄','ptype':'fungicide','is_organic':False,
-             'active_ingredient':'Mancozeb 75% WP — Dithiocarbamate குழு',
-             'target_pests':'ஆரம்ப இலை கருகல், இறுதி இலை கருகல், இலை புள்ளி, Downy Mildew, Anthracnose, துரு நோய்கள்',
-             'dosage':'2.5 கிரா/லிட்டர் தண்ணீர். 7–10 நாட்கள் இடைவெளியில் 3–5 தெளிப்புகள் இடவும்',
-             'safety_interval':'அறுவடைக்கு 7 நாட்கள் முன்பு நிறுத்தவும்',
-             'precautions':'⚠️ கலக்கும்போது முகமூடி அணியவும் — நுண்ணிய தூள் சுவாசிக்கக்கூடாது. தோல் தொடர்பு தவிர்க்கவும். செம்பு மருந்துடன் கலக்காதீர்கள். எதிர்ப்பு ஏற்படாமல் Systemic மருந்துகளுடன் மாற்றி பயன்படுத்தவும்.'},
-            {'name':'Copper Hydroxide 77WP','emoji':'🔵','ptype':'fungicide','is_organic':False,
-             'active_ingredient':'Copper Hydroxide 77% WP — செம்பு அடிப்படை மருந்து',
-             'target_pests':'பாக்டீரியா இலை கருகல், இலை புள்ளி, Downy Mildew, எலுமிச்சை புண், Fire Blight',
-             'dosage':'3 கிரா/லிட்டர் தண்ணீர். இலை மேற்பரப்பு முழுவதும் நனையும் வரை தெளிக்கவும்',
-             'safety_interval':'அறுவடைக்கு 7 நாட்கள் முன்பு நிறுத்தவும்',
-             'precautions':'⚠️ தொடர்ந்து பயன்படுத்தினால் மண்ணில் செம்பு நச்சுத்தன்மை ஏற்படும். சுண்ணாம்புடன் கலக்காதீர்கள். EDTA மருந்துகளுடன் சேர்க்காதீர்கள். கையுறை அணியவும் — தோல் எரிச்சல் ஏற்படும்.'},
-            {'name':'Imidacloprid 17.8SL','emoji':'🐜','ptype':'insecticide','is_organic':False,
-             'active_ingredient':'Imidacloprid 17.8% SL — Neonicotinoid குழு',
-             'target_pests':'பழுப்பு நெல் தத்துப்பூச்சி, வெள்ளை ஈ, அசுவினி, Jassid, Mealybug, இடிப்பான்',
-             'dosage':'0.25–0.3 மி.லி/லிட்டர் — இலை தெளிப்பிற்கு; 250–300 மி.லி/ஹெக்டேர் — மண்ணில்',
-             'safety_interval':'அறுவடைக்கு 21 நாட்கள் முன்பு நிறுத்தவும்',
-             'precautions':'🚨 தேனீக்களுக்கு மிகவும் நச்சானது — பூக்கும் நேரத்தில் தெளிக்கவேண்டாம். Systemic தன்மை — தாவரம் முழுவதும் பரவும். முழு PPE அணியவும். விதை சேர்க்கைக்கு சிறந்தது.'},
-            {'name':'Neem Oil 1500ppm','emoji':'🌿','ptype':'insecticide','is_organic':True,
-             'active_ingredient':'Azadirachtin 1500 ppm — Azadirachta indica இலிருந்து',
-             'target_pests':'அசுவினி, வெள்ளை ஈ, மைட், இடிப்பான், இலை சுரங்கம், Fungus Gnat, கம்பளிப்புழுக்கள் (IGR செயல்பாடு)',
-             'dosage':'5 மி.லி/லிட்டர் தண்ணீர் + 1 மி.லி திரவ சோப்பு (Emulsifier ஆக). இலையின் கீழ்புறம் தெளிக்கவும்.',
-             'safety_interval':'0 நாட்கள் — அதே நாளில் அறுவடை செய்யலாம்',
-             'precautions':'✅ மனிதர்கள், பறவைகள், பாலூட்டிகளுக்கு முற்றிலும் பாதுகாப்பானது. மீனுக்கு அதிக அளவில் தீங்கு. மாலை நேரத்தில் தெளிக்கவும் — UV கதிர்வீச்சு சிதைத்துவிடும். 5–7 நாட்களுக்கு ஒரு முறை மீண்டும் தெளிக்கவும்.'},
-            {'name':'Trichoderma viride','emoji':'🦠','ptype':'fungicide','is_organic':True,
-             'active_ingredient':'Trichoderma viride 1.5% WP — நன்மை செய்யும் பூஞ்சை (2×10⁶ CFU/கிரா)',
-             'target_pests':'Damping off, வேர் அழுகல், வாட்ட நோய் (Fusarium, Pythium, Phytophthora, Sclerotinia)',
-             'dosage':'விதை சேர்க்கை: 4 கிரா/கிலோ விதை. மண் பயன்பாடு: 2.5 கிரா/ஹெக்டேர் — 50 கிரா தொழு உரத்துடன் கலந்து.',
-             'safety_interval':'0 நாட்கள் — முற்றிலும் பாதுகாப்பானது',
-             'precautions':'✅ இரசாயன பூஞ்சை மருந்துகள் அல்லது நுண்ணுயிர் எதிர்ப்பிகளுடன் கலக்காதீர்கள் — நன்மை செய்யும் பூஞ்சை இறந்துவிடும். 30°C-க்கு கீழ் குளிரான இடத்தில் சேமிக்கவும். காலாவதி தேதிக்கு முன் பயன்படுத்தவும்.'},
-            {'name':'Glyphosate 41SL','emoji':'🌾','ptype':'herbicide','is_organic':False,
-             'active_ingredient':'Glyphosate Isopropylamine Salt 41% SL — Phosphonic Acid குழு',
-             'target_pests':'அனைத்து வருடாந்திர மற்றும் பல்லாண்டு களைகள் — குறிப்பாக புல், Sedge, அகன்ற இலை களைகள்',
-             'dosage':'1.6–2.0 லிட்டர்/ஹெக்டேர் — 200 லிட்டர் தண்ணீரில். தீவிரமாக வளரும் பச்சை களைகளில் தெளிக்கவும்.',
-             'safety_interval':'பயிர்களின் மீது அல்லது அருகில் தெளிக்காதீர்கள் — அனைத்து தாவரங்களையும் அழிக்கும்',
-             'precautions':'🚨 Non-Selective — அனைத்து தாவரங்களையும் அழிக்கும். பயிர்களின் மேல் தெளிக்கவேண்டாம். வரப்புகள், சாலை ஓரங்கள், தரிசு நிலங்களில் களைக்கு மட்டும் தெளிக்கவும். முழு PPE அணியவும். காற்று இல்லாத நேரத்தில் தெளிக்கவும்.'},
+        pests = [
+            ('Chlorpyrifos 20EC', 'insecticide', 'Chlorpyrifos', 'Stem borer, Root grub, White fly', '2ml/litre', '21 days', '⚠️ Wear gloves & mask. Do not spray near water bodies.', False, '💊'),
+            ('Lambda-Cyhalothrin', 'insecticide', 'Lambda-Cyhalothrin', 'Bollworm, Aphids, Thrips', '1ml/litre', '14 days', '⚠️ Highly toxic to fish. Avoid drift near water.', False, '🔴'),
+            ('Mancozeb 75WP', 'fungicide', 'Mancozeb', 'Late blight, Downy mildew, Leaf spot', '2.5g/litre', '10 days', '✅ Moderate toxicity. Wear protective gear.', False, '🟡'),
+            ('Copper Hydroxide', 'fungicide', 'Copper Hydroxide', 'Bacterial diseases, Anthracnose', '3g/litre', '7 days', '✅ Low risk. Avoid copper accumulation in soil.', False, '🔵'),
+            ('Imidacloprid 17.8SL', 'insecticide', 'Imidacloprid', 'Sucking pests, White fly, Jassids', '0.5ml/litre', '21 days', '⚠️ Harmful to bees. Do NOT spray on flowering crops.', False, '⚠️'),
+            ('Neem Oil 1500ppm', 'insecticide', 'Azadirachtin', 'Mites, Aphids, Whitefly, Leaf minor', '5ml/litre', '0 days (organic)', '✅ Safe for beneficial insects. Can use near harvest.', True, '🌿'),
+            ('Trichoderma viride', 'fungicide', 'Trichoderma viride', 'Soil-borne fungi: Fusarium, Pythium', '4g/kg seed or 2.5kg/acre', '0 days (organic)', '✅ Completely safe. Beneficial micro-organism.', True, '🦠'),
+            ('Glyphosate 41SL', 'herbicide', 'Glyphosate', 'Broad leaf weeds, Grasses', '1.5–2 litre/acre', '30 days', '🚨 Do NOT spray on crops. Directed soil spray only.', False, '☠️'),
+            ('Pendimethalin', 'herbicide', 'Pendimethalin', 'Annual grasses, Broadleaf weeds', '1.5–2 litre/acre', '15 days', '⚠️ Pre-emergence herbicide. Apply before germination.', False, '🟠'),
+            ('Emamectin Benzoate', 'insecticide', 'Emamectin Benzoate', 'Leaf borer, Army worm, DBM', '0.4g/litre', '14 days', '⚠️ Wear full protective equipment while spraying.', False, '💉'),
         ]
-        for d in data:
-            Pesticide.objects.create(**d)
-        self.stdout.write(f'  ✅ {len(data)} pesticides seeded')
+        for p in pests:
+            Pesticide.objects.create(name=p[0], ptype=p[1], active_ingredient=p[2],
+                target_pests=p[3], dosage=p[4], safety_interval=p[5],
+                precautions=p[6], is_organic=p[7], emoji=p[8])
+        self.stdout.write(f'  ✅ {Pesticide.objects.count()} pesticides created')
 
     def _mandi(self):
         MandiPrice.objects.all().delete()
-        data = [
-            ('Tomato — தக்காளி','🍅','Salem',35,55,42,'kg','up'),
-            ('Onion — வெங்காயம்','🧅','Erode',20,38,28,'kg','down'),
-            ('Paddy — நெல்','🌾','Thanjavur',1850,2050,1950,'quintal','stable'),
-            ('Sugarcane — கரும்பு','🎋','Coimbatore',280,320,295,'quintal','up'),
-            ('Banana — வாழை','🍌','Trichy',15,30,22,'kg','stable'),
-            ('Groundnut — நிலக்கடலை','🥜','Vellore',55,75,65,'kg','up'),
-            ('Turmeric — மஞ்சள்','🟡','Erode',100,150,128,'kg','up'),
-            ('Chilli — மிளகாய்','🌶️','Madurai',85,130,110,'kg','down'),
-            ('Green Gram — பாசிப்பயறு','🫘','Namakkal',80,105,92,'kg','up'),
-            ('Coconut — தேங்காய்','🥥','Coimbatore',25,38,30,'piece','stable'),
+        today = datetime.date.today()
+        prices = [
+            ('Tomato', '🍅', 'Koyambedu, Chennai', 850, 1400, 1100, 'Quintal', 'up'),
+            ('Onion', '🧅', 'Salem', 700, 1200, 950, 'Quintal', 'down'),
+            ('Paddy (Raw)', '🌾', 'Thanjavur', 1900, 2100, 2000, 'Quintal', 'stable'),
+            ('Chilli (Dry)', '🌶️', 'Ramanathapuram', 9000, 14000, 11500, 'Quintal', 'up'),
+            ('Turmeric', '🟡', 'Erode', 7000, 9500, 8200, 'Quintal', 'up'),
+            ('Groundnut', '🥜', 'Vellore', 4800, 5400, 5100, 'Quintal', 'stable'),
+            ('Sugarcane', '🎋', 'Coimbatore', 2800, 3100, 2950, 'Tonne', 'stable'),
+            ('Banana (Poovan)', '🍌', 'Trichy', 1300, 1800, 1550, 'Quintal', 'up'),
+            ('Maize', '🌽', 'Dharmapuri', 1700, 1900, 1800, 'Quintal', 'down'),
+            ('Coconut', '🥥', 'Coimbatore', 12, 22, 17, 'Unit', 'stable'),
+            ('Mango (Totapuri)', '🥭', 'Krishnagiri', 2500, 4000, 3200, 'Quintal', 'up'),
+            ('Garlic', '🧄', 'Madurai', 3500, 5500, 4500, 'Quintal', 'up'),
+            ('Ginger (Fresh)', '🫚', 'Erode', 3500, 6000, 4800, 'Quintal', 'stable'),
+            ('Brinjal', '🍆', 'Coimbatore', 600, 1100, 850, 'Quintal', 'down'),
+            ('Lady Finger', '🌿', 'Salem', 800, 1400, 1100, 'Quintal', 'up'),
+            ('Cauliflower', '🥦', 'Nilgiris', 700, 1300, 1000, 'Quintal', 'down'),
+            ('Cabbage', '🥬', 'Nilgiris', 400, 750, 580, 'Quintal', 'stable'),
+            ('Carrot', '🥕', 'Nilgiris', 700, 1200, 950, 'Quintal', 'up'),
+            ('Cotton (Seed)', '☁️', 'Tirupur', 5500, 6300, 5900, 'Quintal', 'stable'),
+            ('Ragi', '🌾', 'Dharmapuri', 2300, 2700, 2500, 'Quintal', 'up'),
         ]
-        for d in data:
-            MandiPrice.objects.create(
-                crop_name=d[0],emoji=d[1],district=d[2],
-                min_price=d[3],max_price=d[4],modal_price=d[5],
-                unit=d[6],trend=d[7])
-        self.stdout.write(f'  ✅ {len(data)} mandi prices seeded')
+        for p in prices:
+            MandiPrice.objects.create(crop_name=p[0], emoji=p[1], district=p[2],
+                min_price=p[3], max_price=p[4], modal_price=p[5],
+                unit=p[6], trend=p[7], date=today)
+        self.stdout.write(f'  ✅ {MandiPrice.objects.count()} mandi prices created')
 
     def _loans(self):
         LoanScheme.objects.all().delete()
-        data = [
-            {'name':'KCC','full_name':'Kisan Credit Card — கிசான் கிரெடிட் கார்டு','emoji':'💳',
-             'min_amount':'₹10,000','max_amount':'₹3,00,000+',
-             'interest_rate':'ஆண்டுக்கு 7% (2% மானியம் = நடைமுறை 5%). அதிக கடன் தொகைக்கு வட்டி அதிகமாகும்.',
-             'repayment':'12 மாதங்களுக்குள் திரும்பச் செலுத்தவும் (பயிர் கடன்). கால அவகாசம் கடன் 5 வருடம் வரை.',
-             'eligibility':'அனைத்து விவசாயிகளும் — சிறிய, குறு, குத்தகை விவசாயிகள், SHG உறுப்பினர்கள். நில ஆவணங்கள் தேவை.',
-             'documents':'நில பதிவேடுகள் (பட்டா/சிட்டா), அடையாள சான்று, புகைப்படம், வங்கி பாஸ்புக்',
-             'benefits':'நெகிழ்வான ATM பணம் எடுத்தல், காப்பீட்டு கவரேஜ், பயிர் காப்பீடு சேர்க்கப்பட்டுள்ளது, ₹1.6 லட்சம் வரை உத்தரவாதம் இல்லை',
-             'how_to_apply':'அருகிலுள்ள SBI/தேசியமயமாக்கப்பட்ட வங்கி/கூட்டுறவு வங்கியில் நில ஆவணங்களுடன் விண்ணப்பிக்கவும். PM-Kisan portal-லும் online விண்ணப்பிக்கலாம்.'},
-            {'name':'PM-Kisan','full_name':'PM கிசான் சம்மான் நிதி','emoji':'🏛️',
-             'min_amount':'₹2,000 (ஒரு தவணை)','max_amount':'₹6,000/ஆண்டு (3 தவணைகள்)',
-             'interest_rate':'நேரடி நலன் — வட்டி இல்லை',
-             'repayment':'திரும்பச் செலுத்த வேண்டாம் — நேரடி நலன் பரிமாற்றம்',
-             'eligibility':'அனைத்து நில சொந்தக்கார விவசாயிகளும். விலக்கு: நிறுவன நில உரிமையாளர்கள், அரசு ஊழியர்கள், மாதம் ₹10,000-க்கு அதிகமான வருவாய் வரி செலுத்துவோர்.',
-             'documents':'ஆதார் கார்டு, ஆதாருடன் இணைக்கப்பட்ட வங்கி கணக்கு, நில பதிவேடுகள்',
-             'benefits':'₹6,000/ஆண்டு நேரடியாக வங்கி கணக்கில் 3 தவணைகளில் ₹2,000 வீதம். வங்கிக்கு போக வேண்டாம்.',
-             'how_to_apply':'pmkisan.gov.in-ல் அல்லது Common Service Centre (CSC)-ல் பதிவு செய்யவும். ஆதார் வங்கி கணக்துடன் இணைக்கப்பட்டிருக்க வேண்டும்.'},
-            {'name':'PMFBY','full_name':'பிரதான் மந்திரி பயிர் காப்பீட்டு திட்டம்','emoji':'🛡️',
-             'min_amount':'முழு பயிர் மதிப்பு காப்பீடு','max_amount':'பரப்பளவு மற்றும் பயிர் மதிப்பை பொறுத்து',
-             'interest_rate':'கட்டணம்: Kharif 2%, Rabi 1.5%, தோட்டக்கலை 5%',
-             'repayment':'திரும்பச் செலுத்த வேண்டாம் — காப்பீட்டு திட்டம்',
-             'eligibility':'அனைத்து விவசாயிகளும் அறிவிக்கப்பட்ட பயிர்களை சாகுபடி செய்பவர்கள். கடன் வாங்கியவர்கள் மற்றும் வாங்காதவர்கள் இருவரும் தகுதியுடையவர்கள்.',
-             'documents':'நில பதிவேடுகள், வங்கி கணக்கு, ஆதார், விதைப்பு சான்றிதழ்',
-             'benefits':'இயற்கை பேரிடர்கள், பூச்சிகள், நோய்களால் ஏற்படும் இழப்புகளுக்கு முழு பயிர் மதிப்பு இழப்பீடு. விதைப்பிலிருந்து அறுவடைக்கு பின் வரை கவரேஜ்.',
-             'how_to_apply':'KCC கடன் வாங்கிய வங்கியில் அல்லது விவசாய அலுவலகத்தில் கட்-ஆஃப் தேதிக்கு முன் விண்ணப்பிக்கவும். pmfby.gov.in-லும் online விண்ணப்பிக்கலாம்.'},
-            {'name':'NABARD','full_name':'NABARD பண்ணை இயந்திரமயமாக்கல் கடன்','emoji':'🚜',
-             'min_amount':'₹50,000','max_amount':'₹25 லட்சம்',
-             'interest_rate':'9–12% ஆண்டுக்கு — வங்கி மற்றும் நோக்கத்தை பொறுத்து',
-             'repayment':'3–7 வருடங்கள் — 6–12 மாத moratorium-உடன்',
-             'eligibility':'தனிப்பட்ட விவசாயிகள், விவசாயி குழுக்கள், FPO — டிராக்டர், Power Tiller, Thresher, நீர்ப்பாசன உபகரணங்கள் வாங்க',
-             'documents':'நில பதிவேடுகள், உபகரண விற்பனையாளர் மேற்கோள், வருவாய் சான்று, வங்கி அறிக்கைகள்',
-             'benefits':'SC/ST விவசாயிகளுக்கு 50%, பொதுவகைக்கு 25% மானியம் (SMAM திட்டத்தின் கீழ்). குறைந்த முன்பணம்.',
-             'how_to_apply':'வணிக வங்கிகள், RRB, கூட்டுறவு வங்கிகளில் விண்ணப்பிக்கவும். NABARD இந்த கடன்களை மறு நிதியளிக்கிறது. விண்ணப்பத்துடன் விற்பனையாளர் மேற்கோளை சமர்ப்பிக்கவும்.'},
+        schemes = [
+            ('KCC', 'Kisan Credit Card', '💳', '₹10,000', '₹3,00,000',
+             '7% per year (4% with subsidy for prompt repayment)',
+             '1 year revolving credit, renewable annually',
+             'All farmers owning or leasing agricultural land. Can apply at any bank.',
+             'Aadhaar card, Land documents (patta), Passport photo, Bank account',
+             '2% interest subvention for prompt repayment. Insurance coverage included.',
+             'Visit nearest bank branch or CSC. Fill KCC form. Submit land documents.'),
+            ('PM-Kisan', 'Pradhan Mantri Kisan Samman Nidhi', '🏛️', '₹2,000', '₹6,000/year',
+             '0% (Direct benefit transfer, not a loan)',
+             '3 installments of ₹2000 each per year',
+             'All small and marginal farmers with cultivable land. Registered in PM-Kisan portal.',
+             'Aadhaar card, Bank account linked to Aadhaar, Land records',
+             'Annual income support of ₹6000 in 3 equal installments directly to bank account.',
+             'Register at nearest CSC or pmkisan.gov.in. Link Aadhaar with bank account.'),
+            ('PMFBY', 'Pradhan Mantri Fasal Bima Yojana', '🌦️', '₹1,000', 'Full crop value',
+             '2% (Kharif) / 1.5% (Rabi) farmer premium. Remaining paid by Govt.',
+             'Claim within 72 hours of crop loss. Settlement within 45 days.',
+             'All farmers growing notified crops in notified areas. KCC holders auto-enrolled.',
+             'Aadhaar, Bank account, Land documents, Sowing certificate',
+             'Covers yield loss due to drought, flood, pest, disease, fire. Full insurance amount.',
+             'Apply through bank branch or CSC before cutoff date. Enroll via PMFBY portal.'),
+            ('NABARD', 'Agricultural Infrastructure Fund', '🏗️', '₹1 lakh', '₹2 crore',
+             '3% interest subvention per year (effective rate 3-4%)',
+             'Up to 7 years with 2 year moratorium',
+             'Farmers, FPOs, Agri-entrepreneurs. For post-harvest infrastructure projects.',
+             'Project report, Land documents, Registration certificate, Bank statements',
+             'For warehouse, cold storage, processing units, silos. 3% subvention per year.',
+             'Submit project proposal to NABARD district office or any scheduled bank.'),
         ]
-        for d in data:
-            LoanScheme.objects.create(**d)
-        self.stdout.write(f'  ✅ {len(data)} loan schemes seeded')
+        for s in schemes:
+            LoanScheme.objects.create(name=s[0], full_name=s[1], emoji=s[2],
+                min_amount=s[3], max_amount=s[4], interest_rate=s[5],
+                repayment=s[6], eligibility=s[7], documents=s[8],
+                benefits=s[9], how_to_apply=s[10])
+        self.stdout.write(f'  ✅ {LoanScheme.objects.count()} loan schemes created')
 
     def _learn(self):
         LearnContent.objects.all().delete()
-        data = [
-            {'title':'Drip Irrigation Setup Guide','title_tamil':'சொட்டு நீர்ப்பாசன அமைப்பு வழிகாட்டி','ctype':'guide','category':'Irrigation — நீர்ப்பாசனம்','duration':'45 நிமிடம்','difficulty':'beginner','emoji':'💧','description':'காய்கறி மற்றும் பழ பயிர்களுக்கு சொட்டு நீர்ப்பாசனம் அமைக்க முழுமையான வழிகாட்டி. Lateral, Dripper, அழுத்த கட்டுப்பாடு மற்றும் பராமரிப்பு பற்றி விளக்கம்.'},
-            {'title':'Organic Pest Management','title_tamil':'இயற்கை பூச்சி மேலாண்மை','ctype':'article','category':'Pest Management — பூச்சி மேலாண்மை','duration':'20 நிமிடம்','difficulty':'beginner','emoji':'🌿','description':'வேப்ப எண்ணெய், வேப்பம் புண்ணாக்கு, மஞ்சள் ஒட்டும் பொறி, உயிர் பூச்சி மருந்துகள் மற்றும் துணை பயிர் சாகுபடி மூலம் இரசாயனமின்றி பூச்சிகளை கட்டுப்படுத்துவது எப்படி.'},
-            {'title':'Soil Testing & Interpretation','title_tamil':'மண் பரிசோதனை & விளக்கம்','ctype':'guide','category':'Soil Science — மண் அறிவியல்','duration':'30 நிமிடம்','difficulty':'intermediate','emoji':'🧪','description':'மண் மாதிரிகளை எவ்வாறு சேகரிக்கவும், ஆய்வகத்திற்கு அனுப்பவும், அறிக்கையை படிக்கவும், மண் பரிசோதனை முடிவுகளின் படி சரியான உரங்களை இடவும் என்று தெரிந்துகொள்ளுங்கள்.'},
-            {'title':'PM-Kisan & KCC Application','title_tamil':'PM-கிசான் & KCC விண்ணப்ப வழிமுறை','ctype':'guide','category':'Government Schemes — அரசு திட்டங்கள்','duration':'15 நிமிடம்','difficulty':'beginner','emoji':'🏛️','description':'PM-Kisan ₹6000/ஆண்டு நலன் பெறவும் 5% வட்டியில் Kisan Credit Card விண்ணப்பிக்கவும் படிப்படியான வழிமுறை.'},
-            {'title':'Paddy IPM — ஒருங்கிணைந்த பூச்சி மேலாண்மை','title_tamil':'நெல் ஒருங்கிணைந்த பூச்சி மேலாண்மை','ctype':'article','category':'Crop Protection — பயிர் பாதுகாப்பு','duration':'35 நிமிடம்','difficulty':'intermediate','emoji':'🌾','description':'நெல்லுக்கான IPM நடைமுறைகள் — BPH கண்காணிப்பு, ஒளி பொறி, Pheromone பொறி, உயிரியல் கட்டுப்பாடு மற்றும் இரசாயன மருந்தை கடைசி வழியாக பயன்படுத்துதல்.'},
-            {'title':'Vegetable Nursery Raising','title_tamil':'காய்கறி நாற்றங்கால் அமைத்தல்','ctype':'guide','category':'Horticulture — தோட்டக்கலை','duration':'25 நிமிடம்','difficulty':'beginner','emoji':'🌱','description':'தக்காளி, கத்திரி, மிளகாய் மற்றும் குர்க்குமா ஆகியவற்றை Pro-tray-ல் Coco Peat மண் கலவையில் வளர்த்து ஆரோக்கியமான நாற்றுகளை உருவாக்குவது எப்படி.'},
+        learns = [
+            ('Drip Irrigation Basics', 'நீர்த்துளி பாசனம்', 'video', 'irrigation', '15 min', 'Beginner',
+             'Learn how to set up drip irrigation, save 50% water and increase yield.', '💧'),
+            ('Organic Farming Methods', 'இயற்கை விவசாயம்', 'guide', 'farming', '45 min', 'Intermediate',
+             'Complete guide to organic farming: composting, green manure, natural pest control.', '🌿'),
+            ('Soil Health Testing', 'மண் ஆரோக்கிய சோதனை', 'video', 'soil', '20 min', 'Beginner',
+             'How to test soil pH, NPK levels and interpret results for crop planning.', '🧪'),
+            ('Government Subsidy Guide', 'அரசு மானிய வழிகாட்டி', 'guide', 'finance', '30 min', 'Beginner',
+             'Complete guide to all agricultural subsidies, how to apply and receive benefits.', '🏛️'),
+            ('Pest Identification & Control', 'பூச்சி கண்டறிதல் & கட்டுப்பாடு', 'video', 'pest', '25 min', 'Intermediate',
+             'Visual guide to identify common pests and apply correct IPM methods.', '🛡️'),
+            ('Post-Harvest Management', 'அறுவடைக்கு பிந்தைய மேலாண்மை', 'guide', 'harvest', '35 min', 'Intermediate',
+             'Reduce post-harvest losses with proper storage, grading and market linkage.', '🏪'),
         ]
-        for d in data:
-            LearnContent.objects.create(**d)
-        self.stdout.write(f'  ✅ {len(data)} learn contents seeded')
+        for l in learns:
+            LearnContent.objects.create(title=l[0], title_tamil=l[1], ctype=l[2],
+                category=l[3], duration=l[4], difficulty=l[5], description=l[6], emoji=l[7])
+        self.stdout.write(f'  ✅ {LearnContent.objects.count()} learn contents created')
