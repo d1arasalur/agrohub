@@ -1,10 +1,21 @@
 from pathlib import Path
+import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-agrohub-2025-secret-key'
-DEBUG = True
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-agrohub-local-dev-key-2025')
+
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.up.railway.app',
+    'https://*.railway.app',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -18,6 +29,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -46,20 +58,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'agro_site.wsgi.application'
 
-# ============================================================
-# DATABASE — pgAdmin-ல் 'agrohub_db' database உருவாக்கி
-# PASSWORD உங்கள் pgAdmin password-ஆக மாற்றவும்
-# ============================================================
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agrohub_db',
-        'USER': 'postgres',
-        'PASSWORD': 'your_password_here',   # ← இங்கே மாற்றவும்
-        'HOST': 'localhost',
-        'PORT': '5432',
+# ── DATABASE ──────────────────────────────────────
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Railway PostgreSQL — auto connect
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=False,
+        )
     }
-}
+else:
+    # Local PostgreSQL fallback
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'agrohub_db',
+            'USER': 'postgres',
+            'PASSWORD': os.environ.get('DB_PASSWORD', '1234'),
+            'HOST': '*',
+            'PORT': '5432',
+        }
+    }
 
 AUTH_USER_MODEL = 'agro_site.User'
 LOGIN_URL = '/login/'
@@ -69,8 +91,11 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# Static — only used for admin, not our pages
+# ── STATIC FILES ──────────────────────────────────
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
