@@ -1,62 +1,268 @@
 {% extends 'base.html' %}
 {% block title %}FarmConnect Marketplace — AgroHub{% endblock %}
 {% block content %}
-<div class="page-hero">
-  <span class="page-hero-icon">🛒</span>
+
+<div class="phero">
+  <span class="phi">🛒</span>
   <h1 data-en="FarmConnect Marketplace" data-ta="FarmConnect சந்தை">FarmConnect Marketplace</h1>
-  <p data-en="Buy directly from farmers — fresh produce at fair prices" data-ta="விவசாயிகளிடம் நேரடியாக வாங்குங்கள் — நியாயமான விலையில் புதிய பொருட்கள்">Buy directly from farmers — fresh produce at fair prices</p>
+  <p data-en="Buy directly from Tamil Nadu farmers — fresh produce at fair prices, no middlemen" data-ta="தமிழ்நாடு விவசாயிகளிடம் நேரடியாக வாங்குங்கள் — நியாயமான விலையில் புதிய பொருட்கள்">Buy directly from Tamil Nadu farmers — fresh produce at fair prices, no middlemen</p>
 </div>
-<section class="section">
-  <div class="container">
-    <div class="market-toolbar">
-      <div class="search-wrap">
-        <input type="text" id="searchInput" class="form-control search-inp"
-          data-ph-en="Search products... (tomato, onion...)"
-          data-ph-ta="பொருட்கள் தேடுங்கள்... (தக்காளி, வெங்காயம்...)"
-          placeholder="Search products..." oninput="filterProducts()"/>
-        <span class="search-icon">🔍</span>
+
+<section class="sec">
+<div class="container">
+
+  <!-- What is FarmConnect -->
+  <div style="background:linear-gradient(135deg,var(--g900),var(--g700));border-radius:var(--r2);padding:24px 28px;color:#fff;margin-bottom:28px">
+    <h2 style="font-size:1.1rem;font-weight:800;margin-bottom:16px">🤝 <span data-en="What is FarmConnect?" data-ta="FarmConnect என்றால் என்ன?">What is FarmConnect?</span></h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px">
+      <div style="background:rgba(255,255,255,.12);border-radius:10px;padding:14px">
+        <div style="font-size:1.5rem;margin-bottom:6px">🚫</div>
+        <div style="font-weight:700;font-size:.88rem" data-en="No Middlemen" data-ta="தரகர் இல்லை">No Middlemen</div>
+        <div style="font-size:.76rem;opacity:.75;margin-top:3px" data-en="Farmer sells directly to buyer" data-ta="விவசாயி நேரடியாக வாங்குபவருக்கு விற்கிறார்">Farmer sells directly to buyer</div>
       </div>
-      <select class="form-control filter-sel" id="catFilter" onchange="filterProducts()">
-        <option value="" data-en="All Categories" data-ta="அனைத்து வகை">All Categories</option>
-        <option value="vegetables" data-en="Vegetables" data-ta="காய்கறிகள்">Vegetables</option>
-        <option value="fruits" data-en="Fruits" data-ta="பழங்கள்">Fruits</option>
-        <option value="grains" data-en="Grains" data-ta="தானியங்கள்">Grains</option>
-        <option value="spices" data-en="Spices" data-ta="மசாலா">Spices</option>
-      </select>
-      <select class="form-control filter-sel" id="distFilter" onchange="filterProducts()">
-        <option value="" data-en="All Districts" data-ta="அனைத்து மாவட்டங்கள்">All Districts</option>
-        <option>Salem</option><option>Coimbatore</option><option>Madurai</option>
-        <option>Erode</option><option>Trichy</option>
+      <div style="background:rgba(255,255,255,.12);border-radius:10px;padding:14px">
+        <div style="font-size:1.5rem;margin-bottom:6px">💰</div>
+        <div style="font-weight:700;font-size:.88rem" data-en="Fair Prices" data-ta="நியாயமான விலைகள்">Fair Prices</div>
+        <div style="font-size:.76rem;opacity:.75;margin-top:3px" data-en="Based on APMC mandi rates" data-ta="APMC மண்டி விலைகள் அடிப்படையில்">Based on APMC mandi rates</div>
+      </div>
+      <div style="background:rgba(255,255,255,.12);border-radius:10px;padding:14px">
+        <div style="font-size:1.5rem;margin-bottom:6px">📞</div>
+        <div style="font-weight:700;font-size:.88rem" data-en="Direct Contact" data-ta="நேரடி தொடர்பு">Direct Contact</div>
+        <div style="font-size:.76rem;opacity:.75;margin-top:3px" data-en="Call farmer directly for bulk orders" data-ta="மொத்த ஆர்டர்களுக்கு நேரடியாக அழைக்கவும்">Call farmer directly for bulk orders</div>
+      </div>
+      <div style="background:rgba(255,255,255,.12);border-radius:10px;padding:14px">
+        <div style="font-size:1.5rem;margin-bottom:6px">🌱</div>
+        <div style="font-weight:700;font-size:.88rem" data-en="Fresh Produce" data-ta="புதிய விளைபொருட்கள்">Fresh Produce</div>
+        <div style="font-size:.76rem;opacity:.75;margin-top:3px" data-en="Harvested within 24–48 hours" data-ta="24-48 மணி நேரத்திற்குள் அறுவடை செய்யப்பட்டது">Harvested within 24–48 hours</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px">
+    <div class="card cb" style="text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--g700)">{{ listings|length }}</div>
+      <div style="font-size:.72rem;color:var(--c400)" data-en="Active Listings" data-ta="செயலில் உள்ள பட்டியல்கள்">Active Listings</div>
+    </div>
+    <div class="card cb" style="text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--g700)">500+</div>
+      <div style="font-size:.72rem;color:var(--c400)" data-en="Registered Farmers" data-ta="பதிவு செய்த விவசாயிகள்">Registered Farmers</div>
+    </div>
+    <div class="card cb" style="text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--g700)">38</div>
+      <div style="font-size:.72rem;color:var(--c400)" data-en="Districts Covered" data-ta="உள்ளடக்கிய மாவட்டங்கள்">Districts Covered</div>
+    </div>
+    <div class="card cb" style="text-align:center">
+      <div style="font-size:1.5rem;font-weight:900;color:var(--g700)">0%</div>
+      <div style="font-size:.72rem;color:var(--c400)" data-en="Commission Fee" data-ta="கமிஷன் கட்டணம்">Commission Fee</div>
+    </div>
+  </div>
+
+  <!-- Search + Filter -->
+  <div class="card cb" style="margin-bottom:20px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input type="text" class="fi" id="mkSearch" placeholder="Search crop or district..." onkeyup="filterMk()"
+        data-ph-en="Search crop or district..." data-ph-ta="பயிர் அல்லது மாவட்டம் தேடுங்கள்..."
+        style="flex:1;min-width:200px"/>
+      <select class="fi" id="mkCat" onchange="filterMk()" style="min-width:150px">
+        <option value="" data-en="All Types" data-ta="அனைத்து வகை">All Types</option>
+        <option value="up" data-en="↑ Price Rising" data-ta="↑ விலை உயர்வு">↑ Price Rising</option>
+        <option value="down" data-en="↓ Price Falling" data-ta="↓ விலை வீழ்ச்சி">↓ Price Falling</option>
+        <option value="stable" data-en="→ Price Stable" data-ta="→ விலை நிலையானது">→ Price Stable</option>
       </select>
       {% if request.session.user_id %}
-      <button class="btn btnP" onclick="document.getElementById('addModal').style.display='flex'" data-en="+ Sell Your Produce" data-ta="+ உங்கள் பொருட்களை விற்கவும்">+ Sell Your Produce</button>
+      <button class="btn btnP" onclick="document.getElementById('sellModal').style.display='flex'">
+        ➕ <span data-en="List Your Produce" data-ta="உங்கள் பொருட்களை பட்டியலிடுங்கள்">List Your Produce</span>
+      </button>
       {% else %}
       <a href="/login/" class="btn btnO" data-en="Login to Sell" data-ta="விற்க உள்நுழைக">Login to Sell</a>
       {% endif %}
     </div>
-    <div class="products-grid grid-auto" id="productsGrid"></div>
   </div>
+
+  <!-- Product Listings Grid -->
+  {% if listings %}
+  <div class="g3" id="mkGrid">
+    {% for l in listings %}
+    <div class="card mkcard" data-trend="{{ l.trend }}" data-name="{{ l.name|lower }}" data-dist="{{ l.district|lower }}" style="overflow:hidden">
+      <!-- Top color bar by trend -->
+      <div style="height:4px;background:{% if l.trend == 'up' %}#15803d{% elif l.trend == 'down' %}#b91c1c{% else %}var(--g500){% endif %}"></div>
+      <div class="cb">
+        <!-- Crop header -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span style="font-size:2.2rem;line-height:1">{{ l.emoji }}</span>
+          <div style="flex:1">
+            <div style="font-weight:800;font-size:.95rem;color:var(--g900)">{{ l.name }}</div>
+            <div style="font-size:.72rem;color:var(--c400)">📍 {{ l.district }}</div>
+          </div>
+          <div style="text-align:right">
+            {% if l.trend == 'up' %}
+            <span style="color:#15803d;font-weight:700;font-size:.85rem">↑ Rising</span>
+            {% elif l.trend == 'down' %}
+            <span style="color:#b91c1c;font-weight:700;font-size:.85rem">↓ Falling</span>
+            {% else %}
+            <span style="color:var(--c500);font-size:.85rem">→ Stable</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div style="background:var(--g50);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid var(--g200)">
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
+            <span style="font-size:1.5rem;font-weight:900;color:var(--g700)">₹{{ l.price }}</span>
+            <span style="font-size:.78rem;color:var(--c500)">/ {{ l.unit }}</span>
+          </div>
+          <div style="font-size:.73rem;color:var(--c400)">
+            <span data-en="Range:" data-ta="வரம்பு:">Range:</span> ₹{{ l.min_price }} – ₹{{ l.max_price }}
+          </div>
+        </div>
+
+        <!-- Farmer info -->
+        <div style="display:flex;align-items:center;gap:8px;padding:10px;background:var(--c50);border-radius:8px;margin-bottom:12px">
+          <div style="width:34px;height:34px;background:var(--g700);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;font-weight:700;flex-shrink:0">
+            {{ l.farmer|slice:":1" }}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:.82rem;color:var(--c700)">{{ l.farmer }}</div>
+            <div style="font-size:.7rem;color:var(--c400);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">📍 {{ l.village }}</div>
+          </div>
+          <div style="font-size:.75rem;color:#d97706;font-weight:700">⭐ {{ l.rating }}</div>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display:flex;gap:8px">
+          <button class="btn btnP btnSm" style="flex:1" onclick="showToast('📞 Contact: {{ l.phone }} (Demo mode)')">
+            📞 <span data-en="Contact" data-ta="தொடர்பு">Contact</span>
+          </button>
+          <button class="btn btnO btnSm" style="flex:1" onclick="showToast('🛒 Added {{ l.name }} to your inquiry list!')">
+            🛒 <span data-en="Enquire" data-ta="விசாரி">Enquire</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <!-- No data — show how-to -->
+  <div style="text-align:center;padding:60px 20px;background:var(--g50);border-radius:var(--r2);border:2px dashed var(--g300)">
+    <div style="font-size:3rem;margin-bottom:16px">🌱</div>
+    <h3 style="font-weight:700;color:var(--g800);margin-bottom:8px" data-en="No listings yet" data-ta="இன்னும் பட்டியல்கள் இல்லை">No listings yet</h3>
+    <p style="color:var(--c500);font-size:.88rem" data-en="Run: python manage.py seed_data to populate marketplace" data-ta="பட்டியலிட: python manage.py seed_data இயக்கவும்">Run: python manage.py seed_data to populate marketplace</p>
+  </div>
+  {% endif %}
+
+  <!-- How to Buy Guide -->
+  <div class="card cb" style="margin-top:28px;border-top:3px solid var(--g500)">
+    <h3 style="font-size:1rem;font-weight:800;color:var(--g800);margin-bottom:16px">📖 <span data-en="How to Buy from FarmConnect" data-ta="FarmConnect-ல் எப்படி வாங்குவது">How to Buy from FarmConnect</span></h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px">
+      <div style="text-align:center;padding:16px;background:var(--g50);border-radius:12px">
+        <div style="font-size:1.8rem;margin-bottom:8px">1️⃣</div>
+        <div style="font-weight:700;font-size:.85rem;color:var(--g800)" data-en="Browse Listings" data-ta="பட்டியல்களை உலாவுங்கள்">Browse Listings</div>
+        <div style="font-size:.75rem;color:var(--c500);margin-top:4px" data-en="Find the crop and district you need" data-ta="உங்களுக்கு தேவையான பயிர் மற்றும் மாவட்டம் கண்டறியுங்கள்">Find the crop and district you need</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--g50);border-radius:12px">
+        <div style="font-size:1.8rem;margin-bottom:8px">2️⃣</div>
+        <div style="font-weight:700;font-size:.85rem;color:var(--g800)" data-en="Contact Farmer" data-ta="விவசாயியை தொடர்பு கொள்ளுங்கள்">Contact Farmer</div>
+        <div style="font-size:.75rem;color:var(--c500);margin-top:4px" data-en="Call or WhatsApp directly" data-ta="நேரடியாக அழைக்கவும் அல்லது WhatsApp பண்ணவும்">Call or WhatsApp directly</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--g50);border-radius:12px">
+        <div style="font-size:1.8rem;margin-bottom:8px">3️⃣</div>
+        <div style="font-weight:700;font-size:.85rem;color:var(--g800)" data-en="Negotiate Price" data-ta="விலை பேசுங்கள்">Negotiate Price</div>
+        <div style="font-size:.75rem;color:var(--c500);margin-top:4px" data-en="Agree on price, quantity and delivery" data-ta="விலை, அளவு மற்றும் டெலிவரி பற்றி உடன்படுங்கள்">Agree on price, quantity and delivery</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:var(--g50);border-radius:12px">
+        <div style="font-size:1.8rem;margin-bottom:8px">4️⃣</div>
+        <div style="font-weight:700;font-size:.85rem;color:var(--g800)" data-en="Pay & Receive" data-ta="செலுத்துங்கள் & பெறுங்கள்">Pay & Receive</div>
+        <div style="font-size:.75rem;color:var(--c500);margin-top:4px" data-en="UPI payment, get fresh produce" data-ta="UPI மூலம் பணம் செலுத்தி, புதிய விளைபொருட்கள் பெறுங்கள்">UPI payment, get fresh produce</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sell Your Produce CTA -->
+  {% if request.session.user_id %}
+  <div style="background:linear-gradient(135deg,#1e3a2f,var(--g700));border-radius:var(--r2);padding:24px;margin-top:20px;color:#fff;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+    <div style="flex:1">
+      <h3 style="margin-bottom:6px" data-en="Are you a farmer? Sell your produce here!" data-ta="நீங்கள் விவசாயியா? இங்கே உங்கள் விளைபொருட்களை விற்கவும்!">Are you a farmer? Sell your produce here!</h3>
+      <p style="opacity:.8;font-size:.87rem" data-en="List your crops for free. Reach buyers directly. No commission." data-ta="இலவசமாக உங்கள் பயிர்களை பட்டியலிடுங்கள். வாங்குபவர்களை நேரடியாக சென்றடையுங்கள்.">List your crops for free. Reach buyers directly. No commission.</p>
+    </div>
+    <button class="btn" style="background:#fff;color:var(--g800);font-weight:700;white-space:nowrap" onclick="document.getElementById('sellModal').style.display='flex'">
+      ➕ <span data-en="Add Listing" data-ta="பட்டியல் சேர்க்கவும்">Add Listing</span>
+    </button>
+  </div>
+  {% endif %}
+
+</div>
 </section>
 
-<!-- Add Product Modal -->
-<div class="modal-overlay" id="addModal" style="display:none">
-  <div class="modal-box">
-    <button class="modal-close" onclick="document.getElementById('addModal').style.display='none'">✕</button>
-    <h3 data-en="List Your Produce" data-ta="உங்கள் பொருட்களை பட்டியலிடுங்கள்">List Your Produce</h3>
-    <form class="auth-form" onsubmit="addProduct(event)">
-      <div class="fg"><label data-en="Product Name" data-ta="பொருளின் பெயர்">Product Name</label><input type="text" id="pName" class="fi" required/></div>
-      <div class="form-row">
-        <div class="fg"><label data-en="Price (₹/kg)" data-ta="விலை (₹/kg)">Price (₹/kg)</label><input type="number" id="pPrice" class="fi" required/></div>
-        <div class="fg"><label data-en="Quantity (kg)" data-ta="அளவு (kg)">Quantity (kg)</label><input type="number" id="pQty" class="fi" required/></div>
+<!-- Sell Modal -->
+<div id="sellModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:var(--r2);padding:28px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h3 style="font-weight:800;color:var(--g800)" data-en="List Your Produce" data-ta="உங்கள் பொருட்களை பட்டியலிடுங்கள்">List Your Produce</h3>
+      <button onclick="document.getElementById('sellModal').style.display='none'" style="border:none;background:none;font-size:1.4rem;cursor:pointer;color:var(--c500)">✕</button>
+    </div>
+    <div class="fg">
+      <label class="fl" data-en="Crop Name" data-ta="பயிர் பெயர்">Crop Name</label>
+      <input type="text" class="fi" id="sName" placeholder="e.g. Tomato, Onion..."/>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="fl" data-en="Price (₹)" data-ta="விலை (₹)">Price (₹)</label>
+        <input type="number" class="fi" id="sPrice" placeholder="e.g. 1200"/>
       </div>
-      <div class="fg"><label data-en="Category" data-ta="வகை">Category</label>
-        <select id="pCat" class="fi">
-          <option value="vegetables">Vegetables</option><option value="fruits">Fruits</option>
-          <option value="grains">Grains</option><option value="spices">Spices</option>
-        </select>
+      <div class="fg">
+        <label class="fl" data-en="Unit" data-ta="அலகு">Unit</label>
+        <select class="fi" id="sUnit"><option>Quintal</option><option>Kg</option><option>Tonne</option><option>Dozen</option></select>
       </div>
-      <button type="submit" class="btn btnP btnFull" data-en="Add to Market" data-ta="சந்தையில் சேர்க்க">Add to Market</button>
-    </form>
+    </div>
+    <div class="fg">
+      <label class="fl" data-en="Available Quantity" data-ta="கிடைக்கும் அளவு">Available Quantity</label>
+      <input type="number" class="fi" id="sQty" placeholder="e.g. 500 (kg or quintals)"/>
+    </div>
+    <div class="fg">
+      <label class="fl" data-en="District" data-ta="மாவட்டம்">District</label>
+      <select class="fi" id="sDist">
+        <option>Trichy</option><option>Chennai</option><option>Coimbatore</option><option>Madurai</option>
+        <option>Salem</option><option>Erode</option><option>Thanjavur</option><option>Namakkal</option>
+        <option>Dindigul</option><option>Krishnagiri</option><option>Dharmapuri</option><option>Vellore</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label class="fl" data-en="Contact Phone" data-ta="தொடர்பு தொலைபேசி">Contact Phone</label>
+      <input type="tel" class="fi" id="sPhone" placeholder="Your mobile number"/>
+    </div>
+    <div class="fg">
+      <label class="fl" data-en="Description (optional)" data-ta="விளக்கம் (விருப்பமானது)">Description (optional)</label>
+      <input type="text" class="fi" id="sDesc" placeholder="Organic, freshly harvested, delivery available..."/>
+    </div>
+    <button class="btn btnP btnFull" onclick="submitListing()">
+      ✅ <span data-en="Submit Listing" data-ta="பட்டியலை சமர்ப்பிக்கவும்">Submit Listing</span>
+    </button>
+    <p style="font-size:.73rem;color:var(--c400);margin-top:10px;text-align:center" data-en="Our team will verify and publish within 24 hours" data-ta="எங்கள் குழு 24 மணி நேரத்திற்குள் சரிபார்த்து வெளியிடும்">Our team will verify and publish within 24 hours</p>
   </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterMk(){
+  const q = document.getElementById('mkSearch').value.toLowerCase();
+  const t = document.getElementById('mkCat').value;
+  document.querySelectorAll('.mkcard').forEach(c=>{
+    const matchQ = !q || c.dataset.name.includes(q) || c.dataset.dist.includes(q);
+    const matchT = !t || c.dataset.trend === t;
+    c.style.display = (matchQ && matchT) ? '' : 'none';
+  });
+}
+function submitListing(){
+  const name = document.getElementById('sName').value.trim();
+  const price = document.getElementById('sPrice').value;
+  const qty = document.getElementById('sQty').value;
+  const phone = document.getElementById('sPhone').value;
+  if(!name||!price||!qty||!phone){showToast('⚠️ Please fill all required fields!');return;}
+  document.getElementById('sellModal').style.display='none';
+  showToast('✅ Listing submitted! Our team will verify within 24 hours.');
+}
+</script>
 {% endblock %}
