@@ -1,55 +1,148 @@
 {% extends 'base.html' %}
-{% block title %}KisanDiary — Farm Journal{% endblock %}
+{% block title %}KisanDiary — AgroHub{% endblock %}
 {% block content %}
-<div class="page-hero">
-  <span class="page-hero-icon">📔</span>
-  <h1 data-en="KisanDiary — Farm Journal" data-ta="KisanDiary — விவசாய பதிவேடு">KisanDiary — Farm Journal</h1>
-  <p data-en="Track income, expenses and daily farm activities" data-ta="வருமானம், செலவு மற்றும் தினசரி விவசாய செயல்பாடுகளை பதிவு செய்யுங்கள்">Track income, expenses and daily farm activities</p>
+<div class="phero">
+  <span class="phi">📔</span>
+  <h1 data-en="KisanDiary" data-ta="கிசான் பதிவேடு">KisanDiary</h1>
+  <p data-en="Track your farm income and expenses — know your profit" data-ta="உங்கள் பண்ணை வருமானம் மற்றும் செலவுகளை கண்காணிக்கவும்">Track your farm income and expenses — know your profit</p>
 </div>
-{% if not request.session.user_id %}
-<section class="section"><div class="container"><div class="card" style="text-align:center;padding:48px">
-  <div style="font-size:3rem;margin-bottom:16px">🔐</div>
-  <h3 data-en="Login to access your diary" data-ta="பதிவேட்டை பயன்படுத்த உள்நுழையுங்கள்">Login to access your diary</h3>
-  <a href="/login/" class="btn btnP" style="margin-top:16px" data-en="Login Now" data-ta="இப்போது உள்நுழைக">Login Now</a>
-</div></div></section>
-{% else %}
-<section class="section">
+
+<section class="sec">
   <div class="container">
-    <div class="diary-summary" id="diarySummary">
-      <div class="ds-card income"><span data-en="Total Income" data-ta="மொத்த வருமானம்">Total Income</span><strong id="totInc">₹0</strong></div>
-      <div class="ds-card expense"><span data-en="Total Expense" data-ta="மொத்த செலவு">Total Expense</span><strong id="totExp">₹0</strong></div>
-      <div class="ds-card profit"><span data-en="Net Profit" data-ta="நிகர லாபம்">Net Profit</span><strong id="netProfit">₹0</strong></div>
+
+    <!-- Summary -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+      <div class="card cb dinc" style="text-align:center;border-top:4px solid #15803d">
+        <div class="dl" data-en="Total Income" data-ta="மொத்த வருமானம்">Total Income</div>
+        <div class="dv" style="color:#15803d;font-size:1.5rem;font-weight:900">₹{{ income|floatformat:0 }}</div>
+        <div style="font-size:.75rem;color:var(--c400);margin-top:4px">📈 This Period</div>
+      </div>
+      <div class="card cb dexp" style="text-align:center;border-top:4px solid #b91c1c">
+        <div class="dl" data-en="Total Expenses" data-ta="மொத்த செலவு">Total Expenses</div>
+        <div class="dv" style="color:#b91c1c;font-size:1.5rem;font-weight:900">₹{{ expense|floatformat:0 }}</div>
+        <div style="font-size:.75rem;color:var(--c400);margin-top:4px">📉 This Period</div>
+      </div>
+      <div class="card cb dpro" style="text-align:center;border-top:4px solid {% if profit >= 0 %}var(--g700){% else %}#b91c1c{% endif %}">
+        <div class="dl" data-en="Net Profit" data-ta="நிகர லாபம்">Net Profit</div>
+        <div class="dv" style="color:{% if profit >= 0 %}var(--g700){% else %}#b91c1c{% endif %};font-size:1.5rem;font-weight:900">₹{{ profit|floatformat:0 }}</div>
+        <div style="font-size:.75rem;color:var(--c400);margin-top:4px">{% if profit >= 0 %}✅ Profit{% else %}⚠️ Loss{% endif %}</div>
+      </div>
     </div>
-    <div class="g2" style="gap:28px;margin-top:28px">
-      <div class="card">
-        <h3 style="margin-bottom:20px" data-en="Add New Entry" data-ta="புதிய பதிவு சேர்க்க">Add New Entry</h3>
-        <form onsubmit="addEntry(event)">
-          <div class="fg"><label data-en="Date" data-ta="தேதி">Date</label><input type="date" id="dDate" class="fi" required/></div>
-          <div class="fg"><label data-en="Type" data-ta="வகை">Type</label>
-            <select id="dType" class="fi">
+
+    <div class="g2" style="align-items:start">
+
+      <!-- Add Entry Form -->
+      <div class="card cb" style="border-left:4px solid var(--g500)">
+        <h3 style="font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:16px">➕ <span data-en="Add Entry" data-ta="பதிவு சேர்க்கவும்">Add Entry</span></h3>
+        {% if error %}<div class="ae">⚠️ {{ error }}</div>{% endif %}
+        <form method="POST">
+          {% csrf_token %}
+          <div class="fg">
+            <label class="fl" data-en="Date" data-ta="தேதி">Date</label>
+            <input type="date" name="date" class="fi" required id="diaryDate"/>
+          </div>
+          <div class="fg">
+            <label class="fl" data-en="Type" data-ta="வகை">Type</label>
+            <select name="dtype" class="fi" id="diaryType" onchange="updateCategories()">
               <option value="income" data-en="Income" data-ta="வருமானம்">Income</option>
               <option value="expense" data-en="Expense" data-ta="செலவு">Expense</option>
-              <option value="activity" data-en="Activity" data-ta="செயல்பாடு">Activity</option>
             </select>
           </div>
-          <div class="fg"><label data-en="Crop" data-ta="பயிர்">Crop</label>
-            <select id="dCrop" class="fi">
-              <option>Paddy / நெல்</option><option>Tomato / தக்காளி</option>
-              <option>Sugarcane / கரும்பு</option><option>Onion / வெங்காயம்</option>
-              <option>Banana / வாழை</option><option>Other / மற்றவை</option>
+          <div class="fg">
+            <label class="fl" data-en="Category" data-ta="வகைப்பாடு">Category</label>
+            <select name="category" class="fi" id="diaryCategory">
+              <option>Crop Sale</option><option>Vegetable Sale</option><option>Fruit Sale</option><option>Milk Sale</option><option>Other Income</option>
             </select>
           </div>
-          <div class="fg"><label data-en="Description" data-ta="விளக்கம்">Description</label><input type="text" id="dDesc" class="fi" required/></div>
-          <div class="fg"><label data-en="Amount (₹)" data-ta="தொகை (₹)">Amount (₹)</label><input type="number" id="dAmt" class="fi"/></div>
-          <button type="submit" class="btn btnP btnFull" data-en="Add Entry" data-ta="பதிவு சேர்க்க">Add Entry</button>
+          <div class="fg">
+            <label class="fl" data-en="Amount (₹)" data-ta="தொகை (₹)">Amount (₹)</label>
+            <input type="number" name="amount" class="fi" placeholder="0.00" step="0.01" min="0" required/>
+          </div>
+          <div class="fg">
+            <label class="fl" data-en="Description" data-ta="விளக்கம்">Description</label>
+            <input type="text" name="description" class="fi" data-ph-en="e.g. Sold 50kg tomato in Salem market" data-ph-ta="எ.கா. சேலம் சந்தையில் 50 கிலோ தக்காளி விற்றேன்" placeholder="e.g. Sold 50kg tomato" required/>
+          </div>
+          <button type="submit" class="btn btnP btnFull" data-en="Save Entry →" data-ta="பதிவு சேமிக்கவும் →">Save Entry →</button>
         </form>
       </div>
-      <div class="card">
-        <h3 style="margin-bottom:16px" data-en="Recent Entries" data-ta="சமீபத்திய பதிவுகள்">Recent Entries</h3>
-        <div id="entryList" style="max-height:400px;overflow-y:auto"></div>
+
+      <!-- Entries List -->
+      <div class="card cb">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+          <h3 style="font-size:1rem;font-weight:700;color:var(--g800)">📋 <span data-en="Recent Entries" data-ta="சமீபத்திய பதிவுகள்">Recent Entries</span></h3>
+          <div class="tabs" style="margin:0">
+            <button class="tab on" onclick="filterDiary('all',this)" data-en="All" data-ta="அனைத்து">All</button>
+            <button class="tab" onclick="filterDiary('income',this)" data-en="Income" data-ta="வருமானம்">Income</button>
+            <button class="tab" onclick="filterDiary('expense',this)" data-en="Expense" data-ta="செலவு">Expense</button>
+          </div>
+        </div>
+
+        {% if entries %}
+        <div id="diaryList">
+          {% for e in entries %}
+          <div class="dentry diary-row" data-type="{{ e.dtype }}">
+            <div>
+              <div class="ddesc">{{ e.description }}</div>
+              <div class="dmeta">{{ e.category }} · {{ e.date }}</div>
+            </div>
+            <div style="text-align:right">
+              {% if e.dtype == 'income' %}
+                <div class="dai">+ ₹{{ e.amount|floatformat:0 }}</div>
+              {% else %}
+                <div class="dae">- ₹{{ e.amount|floatformat:0 }}</div>
+              {% endif %}
+              <div style="font-size:.7rem;color:var(--c400)">{{ e.get_dtype_display }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:48px 20px;color:var(--c400)">
+          <div style="font-size:3rem;margin-bottom:12px">📔</div>
+          <p data-en="No entries yet. Add your first income or expense!" data-ta="பதிவுகள் இல்லை. உங்கள் முதல் வருமானம் அல்லது செலவை சேர்க்கவும்!">No entries yet. Add your first income or expense!</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="card cb" style="margin-top:20px;background:linear-gradient(135deg,var(--g50),#fff);border:1px solid var(--g200)">
+      <h3 style="font-size:.92rem;font-weight:700;color:var(--g800);margin-bottom:12px">💡 <span data-en="Diary Tips" data-ta="பதிவேடு குறிப்புகள்">Diary Tips</span></h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+        <div style="font-size:.8rem;color:var(--c600);display:flex;gap:8px">✅ <span data-en="Record every sale immediately after market" data-ta="சந்தைக்கு பிறகு உடனே பதிவு செய்யுங்கள்">Record every sale immediately after market</span></div>
+        <div style="font-size:.8rem;color:var(--c600);display:flex;gap:8px">✅ <span data-en="Track fertilizer and pesticide expenses separately" data-ta="உரம் மற்றும் பூச்சி மருந்து செலவை தனியாக பதிவிடுங்கள்">Track fertilizer and pesticide expenses separately</span></div>
+        <div style="font-size:.8rem;color:var(--c600);display:flex;gap:8px">✅ <span data-en="Compare income season-wise to plan better" data-ta="சிறந்த திட்டமிடலுக்கு பருவம் வாரியாக வருமானம் ஒப்பிடுங்கள்">Compare income season-wise to plan better</span></div>
+        <div style="font-size:.8rem;color:var(--c600);display:flex;gap:8px">✅ <span data-en="Use diary data for bank loan applications" data-ta="வங்கி கடன் விண்ணப்பங்களுக்கு பதிவேட்டை பயன்படுத்துங்கள்">Use diary data for bank loan applications</span></div>
       </div>
     </div>
   </div>
 </section>
-{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Set today's date
+document.addEventListener('DOMContentLoaded',()=>{
+  const d = new Date();
+  document.getElementById('diaryDate').value = d.toISOString().split('T')[0];
+});
+
+const incomeCategories = ['Crop Sale','Vegetable Sale','Fruit Sale','Milk Sale','Poultry Sale','Government Subsidy','Other Income'];
+const expenseCategories = ['Seeds','Fertilizer','Pesticide','Labour','Irrigation','Equipment Rent','Transport','Land Rent','Electricity','Other Expense'];
+
+function updateCategories(){
+  const type = document.getElementById('diaryType').value;
+  const cats = type === 'income' ? incomeCategories : expenseCategories;
+  const sel = document.getElementById('diaryCategory');
+  sel.innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
+}
+
+function filterDiary(type, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.diary-row').forEach(r=>{
+    r.style.display = (type==='all'||r.dataset.type===type) ? '' : 'none';
+  });
+}
+</script>
 {% endblock %}

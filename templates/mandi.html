@@ -1,40 +1,120 @@
 {% extends 'base.html' %}
-{% block title %}LiveMandi — Market Prices{% endblock %}
+{% block title %}LiveMandi — AgroHub{% endblock %}
 {% block content %}
-<div class="page-hero">
-  <span class="page-hero-icon">📊</span>
-  <h1 data-en="LiveMandi — Market Prices" data-ta="LiveMandi — சந்தை விலை">LiveMandi — Market Prices</h1>
-  <p data-en="Real-time wholesale prices from Tamil Nadu mandis" data-ta="தமிழ்நாடு சந்தைகளில் இருந்து நேரலை மொத்த விலைகள்">Real-time wholesale prices from Tamil Nadu mandis</p>
+<div class="phero">
+  <span class="phi">📊</span>
+  <h1 data-en="LiveMandi Prices" data-ta="நேரலை மண்டி விலைகள்">LiveMandi Prices</h1>
+  <p data-en="Today's market prices from Tamil Nadu APMC mandis" data-ta="தமிழ்நாடு APMC மண்டிகளின் இன்றைய சந்தை விலைகள்">Today's market prices from Tamil Nadu APMC mandis</p>
 </div>
-<section class="section">
+
+<section class="sec">
   <div class="container">
-    <div class="mandi-controls">
-      <select class="fi" id="mandiDist" onchange="loadMandi()" style="max-width:220px">
-        <option value="Salem">Salem / சேலம்</option>
-        <option value="Coimbatore">Coimbatore / கோயம்புத்தூர்</option>
-        <option value="Madurai">Madurai / மதுரை</option>
-        <option value="Erode">Erode / ஈரோடு</option>
-        <option value="Trichy">Trichy / திருச்சி</option>
-      </select>
-      <span id="mandiDate" style="color:var(--text-light);font-size:0.85rem"></span>
-      <button class="btn btnO btnSm" onclick="loadMandi()">🔄 <span data-en="Refresh" data-ta="புதுப்பிக்க">Refresh</span></button>
+
+    <!-- Summary Stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px">
+      <div class="card cb" style="text-align:center">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--g700)">{{ prices|length }}</div>
+        <div style="font-size:.75rem;color:var(--c400);margin-top:2px" data-en="Commodities" data-ta="பண்டங்கள்">Commodities</div>
+      </div>
+      <div class="card cb" style="text-align:center">
+        <div style="font-size:1.6rem;font-weight:900;color:#15803d">{% for p in prices %}{% if p.trend == 'up' %}↑{% endif %}{% endfor %}</div>
+        <div style="font-size:.75rem;color:var(--c400);margin-top:2px" data-en="Price Up" data-ta="விலை உயர்வு">Price Up ↑</div>
+      </div>
+      <div class="card cb" style="text-align:center">
+        <div style="font-size:1.3rem;font-weight:800;color:var(--g700)">Today</div>
+        <div style="font-size:.75rem;color:var(--c400);margin-top:2px" data-en="Last Updated" data-ta="கடைசி புதுப்பிப்பு">Last Updated</div>
+      </div>
+      <div class="card cb" style="text-align:center">
+        <div style="font-size:1.3rem;font-weight:800;color:var(--g700)">38</div>
+        <div style="font-size:.75rem;color:var(--c400);margin-top:2px" data-en="Districts" data-ta="மாவட்டங்கள்">Districts</div>
+      </div>
     </div>
-    <div class="mandi-table-wrap card" style="padding:0;overflow:hidden;margin-bottom:32px">
-      <table class="mandi-table" id="mandiTable">
-        <thead><tr>
-          <th data-en="Crop" data-ta="பயிர்">Crop</th>
-          <th data-en="Min ₹/kg" data-ta="குறைந்த ₹/kg">Min ₹/kg</th>
-          <th data-en="Max ₹/kg" data-ta="அதிக ₹/kg">Max ₹/kg</th>
-          <th data-en="Avg ₹/kg" data-ta="சராசரி ₹/kg">Avg ₹/kg</th>
-          <th data-en="Change" data-ta="மாற்றம்">Change</th>
-        </tr></thead>
-        <tbody id="mandiBody"></tbody>
-      </table>
+
+    <!-- Filter tabs -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+      <div class="tabs" style="margin-bottom:0">
+        <button class="tab on" onclick="filterMandi('all',this)" data-en="All" data-ta="அனைத்து">All</button>
+        <button class="tab" onclick="filterMandi('veg',this)" data-en="Vegetables" data-ta="காய்கறிகள்">Vegetables</button>
+        <button class="tab" onclick="filterMandi('grain',this)" data-en="Grains" data-ta="தானியங்கள்">Grains</button>
+        <button class="tab" onclick="filterMandi('spice',this)" data-en="Spices" data-ta="மசாலா">Spices</button>
+      </div>
+      <div style="margin-left:auto">
+        <input type="text" class="fi" id="mandiSearch" placeholder="Search crop..." onkeyup="searchMandi()" style="width:200px" data-ph-en="Search crop..." data-ph-ta="பண்டம் தேடுங்கள்..."/>
+      </div>
     </div>
-    <div class="card">
-      <h3 style="margin-bottom:16px" data-en="7-Day Price Chart" data-ta="7 நாள் விலை வரைபடம்">7-Day Price Chart</h3>
-      <canvas id="priceCanvas" height="80"></canvas>
+
+    <!-- Price Table -->
+    <div class="card" style="overflow:hidden">
+      <div style="overflow-x:auto">
+        <table class="mtable" id="mandiTable">
+          <thead>
+            <tr>
+              <th data-en="Commodity" data-ta="பண்டம்">Commodity</th>
+              <th data-en="District" data-ta="மாவட்டம்">District</th>
+              <th data-en="Min Price" data-ta="குறைந்த விலை">Min ₹</th>
+              <th data-en="Max Price" data-ta="அதிக விலை">Max ₹</th>
+              <th data-en="Modal Price" data-ta="சராசரி விலை">Modal ₹</th>
+              <th data-en="Unit" data-ta="அலகு">Unit</th>
+              <th data-en="Trend" data-ta="போக்கு">Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for p in prices %}
+            <tr class="mrow" data-name="{{ p.crop_name|lower }}">
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:1.3rem">{{ p.emoji }}</span>
+                  <div>
+                    <div style="font-weight:700;font-size:.88rem">{{ p.crop_name }}</div>
+                    <div style="font-size:.72rem;color:var(--c400)">APMC Market</div>
+                  </div>
+                </div>
+              </td>
+              <td><span class="bg bgb" style="font-size:.75rem">{{ p.district }}</span></td>
+              <td style="font-weight:600;color:var(--c600)">₹{{ p.min_price }}</td>
+              <td style="font-weight:600;color:var(--c600)">₹{{ p.max_price }}</td>
+              <td style="font-weight:800;color:var(--g800);font-size:.95rem">₹{{ p.modal_price }}</td>
+              <td style="color:var(--c500);font-size:.8rem">/ {{ p.unit }}</td>
+              <td>
+                {% if p.trend == 'up' %}
+                  <span style="color:#15803d;font-weight:700;font-size:.9rem">↑ Rising</span>
+                {% elif p.trend == 'down' %}
+                  <span style="color:#b91c1c;font-weight:700;font-size:.9rem">↓ Falling</span>
+                {% else %}
+                  <span style="color:var(--c500);font-weight:600;font-size:.9rem">→ Stable</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--c500)">Run: python manage.py seed_data</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Notice -->
+    <div class="as" style="margin-top:16px;font-size:.82rem">
+      📢 <strong data-en="Note:" data-ta="குறிப்பு:">Note:</strong>
+      <span data-en=" Prices are indicative. Actual market prices may vary. Visit your local APMC mandi for exact rates." data-ta=" விலைகள் தோராயமானவை. உண்மையான சந்தை விலைகள் மாறுபடலாம். சரியான விலைகளுக்கு உங்கள் உள்ளூர் APMC மண்டியை தொடர்பு கொள்ளவும்."> Prices are indicative. Visit your local APMC mandi for exact rates.</span>
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function filterMandi(type, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  // All rows visible for now (can add category filter later)
+  document.querySelectorAll('.mrow').forEach(r=>r.style.display='');
+}
+function searchMandi(){
+  const q = document.getElementById('mandiSearch').value.toLowerCase();
+  document.querySelectorAll('.mrow').forEach(r=>{
+    r.style.display = r.dataset.name.includes(q) ? '' : 'none';
+  });
+}
+</script>
 {% endblock %}

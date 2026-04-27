@@ -1,36 +1,262 @@
 {% extends 'base.html' %}
-{% block title %}AgroWeather — Farm Weather{% endblock %}
+{% block title %}AgroWeather — AgroHub{% endblock %}
 {% block content %}
-<div class="page-hero">
-  <span class="page-hero-icon">🌦️</span>
-  <h1 data-en="AgroWeather" data-ta="AgroWeather">AgroWeather</h1>
-  <p data-en="Weather forecasts tailored for farming decisions" data-ta="விவசாய முடிவுகளுக்கான வானிலை அறிக்கை">Weather forecasts tailored for farming decisions</p>
+<div class="phero">
+  <span class="phi">🌦️</span>
+  <h1 data-en="AgroWeather" data-ta="விவசாய வானிலை">AgroWeather</h1>
+  <p data-en="Live weather for Tamil Nadu farmers — real data, farming advisory" data-ta="தமிழக விவசாயிகளுக்கான நேரலை வானிலை தகவல்">Live weather for Tamil Nadu farmers — real data, farming advisory</p>
 </div>
-<section class="section">
+
+<section class="sec">
   <div class="container">
-    <div class="weather-search">
-      <input type="text" id="weatherCity" class="fi"
-        data-ph-en="Enter district name..." data-ph-ta="மாவட்டம் உள்ளிடவும்..."
-        placeholder="Enter district name..." style="max-width:360px"/>
-      <button class="btn btnP" onclick="getWeather()" data-en="Get Weather" data-ta="வானிலை பார்க்க">Get Weather</button>
-    </div>
-    <div class="weather-main-card card" id="weatherCard">
-      <div class="weather-big">
-        <div class="w-icon" id="wIcon">⛅</div>
-        <div><div class="w-temp" id="wTemp">-- °C</div><div class="w-desc" id="wDesc" data-en="Select a district" data-ta="மாவட்டம் தேர்ந்தெடுக்கவும்">Select a district</div><div class="w-loc" id="wLoc">—</div></div>
+    <!-- District Selector -->
+    <div class="card cb" style="margin-bottom:20px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <select id="districtSel" class="fi" style="flex:1;min-width:200px;max-width:320px">
+          <option value="">-- Select District --</option>
+          <option value="Trichy,India">Trichy (திருச்சி)</option>
+          <option value="Chennai,India">Chennai (சென்னை)</option>
+          <option value="Coimbatore,India">Coimbatore (கோயம்புத்தூர்)</option>
+          <option value="Madurai,India">Madurai (மதுரை)</option>
+          <option value="Salem,India">Salem (சேலம்)</option>
+          <option value="Erode,India">Erode (ஈரோடு)</option>
+          <option value="Thanjavur,India">Thanjavur (தஞ்சாவூர்)</option>
+          <option value="Tirunelveli,India">Tirunelveli (திருநெல்வேலி)</option>
+          <option value="Vellore,India">Vellore (வேலூர்)</option>
+          <option value="Namakkal,India">Namakkal (நாமக்கல்)</option>
+          <option value="Dindigul,India">Dindigul (திண்டுக்கல்)</option>
+          <option value="Krishnagiri,India">Krishnagiri (கிருஷ்ணகிரி)</option>
+          <option value="Dharmapuri,India">Dharmapuri (தர்மபுரி)</option>
+          <option value="Tiruppur,India">Tiruppur (திருப்பூர்)</option>
+          <option value="Kancheepuram,India">Kancheepuram (காஞ்சிபுரம்)</option>
+          <option value="Villupuram,India">Villupuram (விழுப்புரம்)</option>
+          <option value="Cuddalore,India">Cuddalore (கடலூர்)</option>
+          <option value="Nagapattinam,India">Nagapattinam (நாகப்பட்டினம்)</option>
+          <option value="Tiruvarur,India">Tiruvarur (திருவாரூர்)</option>
+          <option value="Pudukkottai,India">Pudukkottai (புதுக்கோட்டை)</option>
+        </select>
+        <button class="btn btnP" onclick="getWeather()" id="wBtn">
+          🌡️ <span data-en="Get Live Weather" data-ta="நேரலை வானிலை பெறவும்">Get Live Weather</span>
+        </button>
       </div>
-      <div class="weather-stats">
-        <div class="ws"><span>💧</span><strong id="wHum">--%</strong><p data-en="Humidity" data-ta="ஈரப்பதம்">Humidity</p></div>
-        <div class="ws"><span>💨</span><strong id="wWind">-- km/h</strong><p data-en="Wind" data-ta="காற்று">Wind</p></div>
-        <div class="ws"><span>🌡️</span><strong id="wFeel">-- °C</strong><p data-en="Feels like" data-ta="உணர்வு">Feels like</p></div>
-        <div class="ws"><span>🌧️</span><strong id="wRain">-- mm</strong><p data-en="Rainfall" data-ta="மழை">Rainfall</p></div>
+    </div>
+
+    <!-- Loading -->
+    <div id="wLoading" style="display:none;text-align:center;padding:40px">
+      <div style="font-size:2rem;animation:spin 1s linear infinite;display:inline-block">⟳</div>
+      <p style="color:var(--c500);margin-top:10px" data-en="Fetching live weather..." data-ta="வானிலை தகவல் பெறுகிறோம்...">Fetching live weather...</p>
+    </div>
+
+    <!-- Error -->
+    <div id="wError" style="display:none" class="ae">
+      ⚠️ <span id="wErrorMsg">Could not fetch weather data. Please try again.</span>
+    </div>
+
+    <!-- Weather Display -->
+    <div id="wDisplay" style="display:none">
+
+      <!-- Main Weather Card -->
+      <div class="card" style="margin-bottom:20px;overflow:hidden">
+        <div style="background:linear-gradient(135deg,var(--g900),var(--g700));padding:28px;color:#fff;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+          <div style="font-size:5rem;line-height:1" id="wMainIcon">🌤️</div>
+          <div style="flex:1">
+            <div style="font-size:.85rem;opacity:.7;margin-bottom:4px" id="wLocation">—</div>
+            <div style="font-size:3.5rem;font-weight:900;line-height:1" id="wTemp">--°C</div>
+            <div style="font-size:1.1rem;opacity:.85;margin-top:4px" id="wDesc">—</div>
+            <div style="font-size:.82rem;opacity:.6;margin-top:4px" id="wTime">—</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;min-width:160px">
+            <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px 14px">
+              <div style="font-size:.7rem;opacity:.6;margin-bottom:2px">🌡️ Feels Like</div>
+              <div style="font-size:1.1rem;font-weight:700" id="wFeels">--°C</div>
+            </div>
+            <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:10px 14px">
+              <div style="font-size:.7rem;opacity:.6;margin-bottom:2px">🌡️ Max / Min</div>
+              <div style="font-size:1.1rem;font-weight:700" id="wMaxMin">-- / --</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--c200)" id="wStats">
+          <div style="background:#fff;padding:16px;text-align:center">
+            <div style="font-size:1.4rem">💧</div>
+            <div style="font-size:1rem;font-weight:700;color:var(--g800)" id="wHumidity">--%</div>
+            <div style="font-size:.72rem;color:var(--c400)" data-en="Humidity" data-ta="ஈரப்பதம்">Humidity</div>
+          </div>
+          <div style="background:#fff;padding:16px;text-align:center">
+            <div style="font-size:1.4rem">💨</div>
+            <div style="font-size:1rem;font-weight:700;color:var(--g800)" id="wWind">-- km/h</div>
+            <div style="font-size:.72rem;color:var(--c400)" data-en="Wind Speed" data-ta="காற்று வேகம்">Wind Speed</div>
+          </div>
+          <div style="background:#fff;padding:16px;text-align:center">
+            <div style="font-size:1.4rem">🌧️</div>
+            <div style="font-size:1rem;font-weight:700;color:var(--g800)" id="wRain">-- mm</div>
+            <div style="font-size:.72rem;color:var(--c400)" data-en="Rainfall" data-ta="மழைவீழ்ச்சி">Rainfall</div>
+          </div>
+          <div style="background:#fff;padding:16px;text-align:center">
+            <div style="font-size:1.4rem">☀️</div>
+            <div style="font-size:1rem;font-weight:700;color:var(--g800)" id="wUV">--</div>
+            <div style="font-size:.72rem;color:var(--c400)" data-en="UV Index" data-ta="UV குறியீடு">UV Index</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Farming Advisory -->
+      <div class="card cb" style="margin-bottom:20px;border-left:4px solid var(--g500)">
+        <h3 style="font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:14px">🌾 <span data-en="Farming Advisory" data-ta="விவசாய அறிவுரை">Farming Advisory</span></h3>
+        <div id="wAdvisory" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+      <!-- 7-Day Forecast -->
+      <div class="card cb" style="margin-bottom:20px">
+        <h3 style="font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:16px">📅 <span data-en="7-Day Forecast" data-ta="7 நாள் வானிலை அறிக்கை">7-Day Forecast</span></h3>
+        <div id="wForecast" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px"></div>
+      </div>
+
+      <!-- Hourly Today -->
+      <div class="card cb">
+        <h3 style="font-size:1rem;font-weight:700;color:var(--g800);margin-bottom:16px">🕐 <span data-en="Today's Hourly" data-ta="இன்றைய தினசரி வானிலை">Today's Hourly</span></h3>
+        <div id="wHourly" style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px"></div>
       </div>
     </div>
-    <div class="advisory-card card" id="advisoryCard" style="margin-top:24px">
-      <h3 data-en="🌾 Farming Advisory" data-ta="🌾 விவசாய அறிவுரை">🌾 Farming Advisory</h3>
-      <p id="advisoryText" data-en="Get weather data to see advisory" data-ta="அறிவுரை காண வானிலை தகவல் பெறுங்கள்">Get weather data to see advisory</p>
-    </div>
-    <div class="forecast-strip" id="forecastStrip"></div>
   </div>
 </section>
+
+<style>
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media(max-width:600px){#wStats{grid-template-columns:1fr 1fr}}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const WMO_CODES = {
+  0:'Clear Sky ☀️',1:'Mainly Clear 🌤️',2:'Partly Cloudy ⛅',3:'Overcast ☁️',
+  45:'Foggy 🌫️',48:'Icy Fog 🌫️',51:'Light Drizzle 🌦️',53:'Drizzle 🌦️',55:'Heavy Drizzle 🌧️',
+  61:'Light Rain 🌧️',63:'Rain 🌧️',65:'Heavy Rain 🌧️',
+  80:'Rain Showers 🌦️',81:'Heavy Showers 🌧️',82:'Violent Showers ⛈️',
+  95:'Thunderstorm ⛈️',96:'Thunderstorm+Hail ⛈️',99:'Severe Thunderstorm ⛈️'
+};
+const WMO_ICONS = {
+  0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',
+  51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',
+  80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'
+};
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAYS_TA = ['ஞா','திங்','செவ்','புத்','வியா','வெள்','சனி'];
+
+async function getWeather(){
+  const sel = document.getElementById('districtSel');
+  if(!sel.value){showToast('Please select a district first!');return;}
+  const city = sel.value;
+  document.getElementById('wLoading').style.display='block';
+  document.getElementById('wDisplay').style.display='none';
+  document.getElementById('wError').style.display='none';
+
+  try{
+    // Geocoding
+    const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
+    const geoData = await geoRes.json();
+    if(!geoData.results?.length) throw new Error('Location not found');
+    const {latitude:lat, longitude:lon, name, admin1} = geoData.results[0];
+
+    // Weather
+    const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation,uv_index&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,uv_index_max&timezone=Asia%2FKolkata&forecast_days=7`);
+    const w = await wRes.json();
+    const c = w.current;
+
+    document.getElementById('wLoading').style.display='none';
+    document.getElementById('wDisplay').style.display='block';
+
+    // Main info
+    const now = new Date();
+    document.getElementById('wLocation').textContent = `📍 ${name}, ${admin1}, Tamil Nadu`;
+    document.getElementById('wTemp').textContent = `${Math.round(c.temperature_2m)}°C`;
+    document.getElementById('wDesc').textContent = WMO_CODES[c.weather_code] || 'Clear';
+    document.getElementById('wMainIcon').textContent = WMO_ICONS[c.weather_code] || '🌤️';
+    document.getElementById('wTime').textContent = `Updated: ${now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})} IST`;
+    document.getElementById('wFeels').textContent = `${Math.round(c.apparent_temperature)}°C`;
+    document.getElementById('wMaxMin').textContent = `${Math.round(w.daily.temperature_2m_max[0])}° / ${Math.round(w.daily.temperature_2m_min[0])}°`;
+    document.getElementById('wHumidity').textContent = `${c.relative_humidity_2m}%`;
+    document.getElementById('wWind').textContent = `${Math.round(c.wind_speed_10m)} km/h`;
+    document.getElementById('wRain').textContent = `${c.precipitation} mm`;
+    document.getElementById('wUV').textContent = c.uv_index || '0';
+
+    // Advisory
+    genAdvisory(c, w.daily);
+
+    // 7-Day Forecast
+    const fc = document.getElementById('wForecast');
+    fc.innerHTML = '';
+    w.daily.weather_code.forEach((code,i)=>{
+      const d = new Date(); d.setDate(d.getDate()+i);
+      fc.innerHTML += `<div style="min-width:90px;background:var(--c50);border-radius:12px;padding:14px;text-align:center;flex-shrink:0;border:1px solid var(--c200)">
+        <div style="font-size:.72rem;color:var(--c400);margin-bottom:5px">${i===0?'Today':DAYS[d.getDay()]}</div>
+        <div style="font-size:1.6rem">${WMO_ICONS[code]||'🌤️'}</div>
+        <div style="font-size:.88rem;font-weight:700;color:var(--g800)">${Math.round(w.daily.temperature_2m_max[i])}°</div>
+        <div style="font-size:.75rem;color:var(--c400)">${Math.round(w.daily.temperature_2m_min[i])}°</div>
+        <div style="font-size:.7rem;color:#2563eb;margin-top:3px">🌧️ ${Math.round(w.daily.precipitation_sum[i]||0)}mm</div>
+      </div>`;
+    });
+
+    // Hourly (next 12 hours)
+    const hr = document.getElementById('wHourly');
+    hr.innerHTML = '';
+    const nowHour = new Date().getHours();
+    let count=0;
+    for(let i=0;i<w.hourly.temperature_2m.length&&count<12;i++){
+      const h = new Date(); h.setMinutes(0,0,0);
+      h.setHours(i);
+      if(i<nowHour) continue;
+      count++;
+      hr.innerHTML += `<div style="min-width:80px;background:var(--c50);border-radius:12px;padding:12px;text-align:center;flex-shrink:0;border:1px solid var(--c200)">
+        <div style="font-size:.7rem;color:var(--c400);margin-bottom:4px">${h.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>
+        <div style="font-size:1.4rem">${WMO_ICONS[w.hourly.weather_code[i]]||'🌤️'}</div>
+        <div style="font-size:.88rem;font-weight:700;color:var(--g800)">${Math.round(w.hourly.temperature_2m[i])}°C</div>
+        <div style="font-size:.7rem;color:#2563eb">💧${w.hourly.precipitation_probability[i]||0}%</div>
+      </div>`;
+    }
+  }catch(err){
+    document.getElementById('wLoading').style.display='none';
+    document.getElementById('wError').style.display='block';
+    document.getElementById('wErrorMsg').textContent = 'Could not load weather. Check internet connection.';
+  }
+}
+
+function genAdvisory(c, daily){
+  const temp = Math.round(c.temperature_2m);
+  const hum = c.relative_humidity_2m;
+  const wind = Math.round(c.wind_speed_10m);
+  const rain = c.precipitation;
+  const adv = [];
+
+  if(temp > 38) adv.push({icon:'🔥',color:'#b91c1c',bg:'#fef2f2',text:`அதிக வெப்பம் (${temp}°C) — Irrigate crops in early morning (6-9AM) or evening (5-7PM). Avoid afternoon fieldwork.`});
+  else if(temp > 32) adv.push({icon:'☀️',color:'#d97706',bg:'#fffbeb',text:`Warm day (${temp}°C) — Good for most crops. Monitor soil moisture. Water if needed.`});
+  else if(temp < 20) adv.push({icon:'❄️',color:'#1d4ed8',bg:'#eff6ff',text:`Cool day (${temp}°C) — Good growing conditions. Watch for fungal diseases in moist weather.`});
+  else adv.push({icon:'✅',color:'var(--g700)',bg:'var(--g50)',text:`Ideal temperature (${temp}°C) — Excellent farming conditions today.`});
+
+  if(hum > 80) adv.push({icon:'💧',color:'#7e22ce',bg:'#fdf4ff',text:`High humidity (${hum}%) — High fungal disease risk. Avoid overhead irrigation. Spray preventive fungicide.`});
+  else if(hum < 40) adv.push({icon:'🌵',color:'#b45309',bg:'#fff7ed',text:`Low humidity (${hum}%) — Increase irrigation frequency. Mulch crops to retain moisture.`});
+
+  if(rain > 5) adv.push({icon:'🌧️',color:'#1d4ed8',bg:'#eff6ff',text:`Rain today (${rain}mm) — Do NOT spray pesticides or fertilizers. Wait 24 hours after rain.`});
+  else if(rain > 0) adv.push({icon:'🌦️',color:'#0369a1',bg:'#f0f9ff',text:`Light rain (${rain}mm) — Good for paddy. Delay fertilizer application by 6 hours.`});
+  else adv.push({icon:'💊',color:'var(--g700)',bg:'var(--g50)',text:`No rain today — Good day for pesticide/fertilizer application. Spray in morning or evening.`});
+
+  if(wind > 30) adv.push({icon:'💨',color:'#b91c1c',bg:'#fef2f2',text:`Strong winds (${wind}km/h) — Do NOT spray chemicals. Risk of spray drift. Support tall crops.`});
+
+  const doc = document.getElementById('wAdvisory');
+  doc.innerHTML = adv.map(a=>`
+    <div style="background:${a.bg};border-radius:10px;padding:13px 16px;display:flex;gap:10px;align-items:flex-start;border:1px solid ${a.color}22">
+      <span style="font-size:1.2rem;flex-shrink:0">${a.icon}</span>
+      <p style="font-size:.85rem;color:${a.color};line-height:1.6;margin:0">${a.text}</p>
+    </div>`).join('');
+}
+
+// Auto-load Trichy on page load
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('districtSel').value='Trichy,India';
+  getWeather();
+});
+</script>
 {% endblock %}
